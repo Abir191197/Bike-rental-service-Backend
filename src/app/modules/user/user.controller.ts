@@ -16,10 +16,6 @@ const createUser = catchAsync(async (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-export const userControllers = {
-  createUser,
-=======
 
 const findUser = catchAsync(async (req, res) => {
   const result = await UserService.findUserFromDB(req.user);
@@ -49,5 +45,4 @@ export const userControllers = {
   createUser,
   findUser,
   updatedUser,
->>>>>>> 048a7b4 (Complete)
 };

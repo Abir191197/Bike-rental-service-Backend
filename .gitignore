@@ -5,7 +5,7 @@ node_modules
 .env
 
 # Ignore dist directory (contains compiled code)
-dist
+
 
 # Ignore any other build artifacts
 *.log

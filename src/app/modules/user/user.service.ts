@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import { TUser } from "./user.interface";
-import UserModel from "./user.model";
-
-const createUserIntoDB = async (payload: TUser) => {
-  
-  
-
-=======
 import { JwtPayload } from "jsonwebtoken";
 import AppError from "../../errors/appError";
 import { TUser } from "./user.interface";
@@ -15,16 +6,10 @@ import httpStatus from "http-status";
 
 const createUserIntoDB = async (payload: TUser) => {
   
->>>>>>> 048a7b4 (Complete)
   const result = await UserModel.create(payload);
   return result;
 };
 
-<<<<<<< HEAD
-export const UserService = {
-  createUserIntoDB,
-};
-=======
 const findUserFromDB = async (payload:JwtPayload|null) => {
     try {
       if (payload !== null) {
@@ -66,4 +51,3 @@ export const UserService = {
   findUserFromDB,
   updatedUserIntoDB,
 };
->>>>>>> 048a7b4 (Complete)

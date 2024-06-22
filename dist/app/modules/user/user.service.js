@@ -25,7 +25,7 @@ const findUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* 
         if (payload !== null) {
             const result = yield user_model_1.default.findOne({
                 email: payload.email,
-            }).select("+password");
+            }).select("-password");
             return result;
         }
     }

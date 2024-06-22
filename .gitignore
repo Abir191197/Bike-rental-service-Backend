@@ -1,0 +1,15 @@
+# Ignore node_modules directory
+node_modules
+
+# Ignore .env file (contains sensitive information)
+.env
+
+# Ignore dist directory (contains compiled code)
+dist
+
+# Ignore any other build artifacts
+*.log
+*.log.*
+*.tmp
+*.tmp.*
+*.bak

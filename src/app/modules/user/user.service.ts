@@ -18,6 +18,7 @@ const findUserFromDB = async (payload:JwtPayload|null) => {
         }).select("-password");
         return result;
       }
+      
     } catch (error) {
       throw new AppError(httpStatus.BAD_REQUEST, "Failed to Get User");
     }

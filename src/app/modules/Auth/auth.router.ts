@@ -13,7 +13,7 @@ router.post(
 );
 
 router.post('/login', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.logIn)
-router.post('/LogIn', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.logIn)
+
 
 router.post(
   "/refresh-token",

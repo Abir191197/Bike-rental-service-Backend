@@ -24,6 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_1 = __importDefault(require("http-status"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const appError_1 = __importDefault(require("../../errors/appError"));
@@ -31,6 +32,8 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../../../config")); // Assuming you have a configuration file
 // SignInUser function
 const signInUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const hashedPassword = yield bcrypt_1.default.hash(payload.password, 10);
+    payload.password = hashedPassword;
     const result = yield user_model_1.default.create(payload);
     const _a = result.toObject(), { password } = _a, userWithoutSensitiveFields = __rest(_a, ["password"]);
     return userWithoutSensitiveFields;
@@ -38,10 +41,11 @@ const signInUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
 // LogInUser function
 const logInUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // Checking if the user exists
-    const user = yield user_model_1.default.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email }).select("-password");
+    const user = yield user_model_1.default.findOne({ email: payload === null || payload === void 0 ? void 0 : payload.email }).select("+password");
     if (!user) {
         throw new appError_1.default(http_status_1.default.NOT_FOUND, "This user is not found!");
     }
+    const isMatch = yield bcrypt_1.default.compare(payload === null || payload === void 0 ? void 0 : payload.password, user.password);
     // Creating a JWT token upon successful login
     const jwtPayload = {
         email: user.email,

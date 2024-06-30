@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 import UserModel from "../user/user.model";
 import { TLoginUser } from "./auth.interface";
@@ -8,6 +9,9 @@ import config from "../../../config"; // Assuming you have a configuration file
 
 // SignInUser function
 const signInUser = async (payload: TUser) => {
+
+  const hashedPassword = await bcrypt.hash(payload.password, 10);
+  payload.password = hashedPassword;
   const result = await UserModel.create(payload);
   const { password, ...userWithoutSensitiveFields } = result.toObject();
   return userWithoutSensitiveFields;
@@ -17,13 +21,13 @@ const signInUser = async (payload: TUser) => {
 const logInUser = async (payload: TLoginUser) => {
   // Checking if the user exists
   const user = await UserModel.findOne({ email: payload?.email }).select(
-    "-password"
+    "+password"
   );
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
   }
-
+const isMatch =await bcrypt.compare(payload?.password,user.password)
   // Creating a JWT token upon successful login
   const jwtPayload: JwtPayload = {
     email: user.email,

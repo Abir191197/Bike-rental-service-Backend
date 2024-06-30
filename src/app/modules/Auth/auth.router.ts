@@ -9,16 +9,16 @@ const router = express.Router();
 router.post(
   "/signup",
   validateRequest(UserValidation.userValidationSchema),
-  AuthControllers.SignIn
+  AuthControllers.signIn
 );
 
-router.post('/login', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.LogIn)
-router.post('/LogIn', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.LogIn)
+router.post('/login', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.logIn)
+router.post('/LogIn', validateRequest(AuthValidation.loginValidationSchema), AuthControllers.logIn)
 
 router.post(
   "/refresh-token",
   validateRequest(AuthValidation.refreshTokenValidationSchema),
-  AuthControllers.refreshToken
+  AuthControllers.refreshAccessToken
 );
 
 

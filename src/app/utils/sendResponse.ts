@@ -1,21 +1,17 @@
 import { Response } from "express";
-type IApiReponse<T> = {
+import httpStatus from "http-status";
+
+interface ApiResponse<T> {
   statusCode: number;
   success: boolean;
-  message?: string | null;
-  
-  data?: T | null;
-};
+  message: string;
+  token?: string; 
+  data?: T;
+}
 
-const sendResponse = <T>(res: Response, data: IApiReponse<T>): void => {
-  const responseData: IApiReponse<T> = {
-    statusCode: data.statusCode,
-    success: data.success,
-    message: data.message || null,
-    data: data.data || null || undefined,
-  };
-
-  res.status(data.statusCode).json(responseData);
+const sendResponse = <T>(res: Response, responseData: ApiResponse<T>) => {
+  const { statusCode, success, message, data, token } = responseData;
+  res.status(statusCode).json({ success, message, data, token });
 };
 
 export default sendResponse;

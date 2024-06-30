@@ -19,19 +19,19 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
 const config_1 = __importDefault(require("../../../config"));
 // SignIn function
-const SignIn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const signIn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.signInUser(req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "User is signed in successfully!",
+        message: "User signed up successfully!",
         data: result,
     });
 }));
 // LogIn function
-const LogIn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const logIn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.AuthServices.logInUser(req.body);
-    const { refreshToken, accessToken } = result;
+    const { accessToken, refreshToken } = result; // Assuming the result includes accessToken
     res.cookie("refreshToken", refreshToken, {
         secure: config_1.default.NODE_ENV === "production",
         httpOnly: true,
@@ -40,29 +40,37 @@ const LogIn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, 
         secure: config_1.default.NODE_ENV === "production",
         httpOnly: true,
     });
+    // Example user data
+    const userData = {
+        _id: result.user._id,
+        name: result.user.name,
+        email: result.user.email,
+        phone: result.user.phone,
+        address: result.user.address,
+        role: result.user.role,
+    };
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "User is logged in successfully!",
-        data: {
-            result,
-        },
+        message: "User logged in successfully",
+        token: result.accessToken,
+        data: userData,
     });
 }));
 // RefreshToken function
-const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const refreshAccessToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { refreshToken } = req.cookies;
     const result = yield auth_service_1.AuthServices.refreshToken(refreshToken);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "User access token refreshed successfully!",
-        data: result,
+        message: "Access token refreshed successfully!",
+        token: result.accessToken,
+        data: null, // Optionally include additional data if needed
     });
 }));
-// Exporting AuthControllers
 exports.AuthControllers = {
-    SignIn,
-    LogIn,
-    refreshToken,
+    signIn,
+    logIn,
+    refreshAccessToken,
 };

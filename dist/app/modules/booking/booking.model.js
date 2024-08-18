@@ -4,7 +4,7 @@ const mongoose_1 = require("mongoose");
 const BookingSchema = new mongoose_1.Schema({
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Users" },
     bikeId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Bikes" },
-    startTime: { type: Date, },
+    startTime: { type: Date },
     returnTime: { type: Date, default: null },
     totalCost: { type: Number, default: 0 },
     isReturned: { type: Boolean, default: false },

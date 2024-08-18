@@ -69,8 +69,16 @@ const refreshAccessToken = (0, catchAsync_1.default)((req, res) => __awaiter(voi
         data: null, // Optionally include additional data if needed
     });
 }));
+const google = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user; // User info from Passport
+    // Optionally log user information for debugging
+    //console.log(`Authenticated user: ${user?.email}`);
+    // Redirect to your dashboard or desired page
+    res.redirect("/dashboard");
+}));
 exports.AuthControllers = {
     signIn,
     logIn,
     refreshAccessToken,
+    google,
 };

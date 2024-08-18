@@ -5,7 +5,6 @@ import UserModel from "../user/user.model";
 import { TBooking } from "./booking.interface";
 import BookingModel from "./booking.model";
 
-
 const createBookingIntoDB = async (payload: {
   authUserInformation: any;
   rentalInformation: any;
@@ -31,8 +30,6 @@ const createBookingIntoDB = async (payload: {
   const userId = isUserExist._id;
   const bikeId = isBikeExist._id;
 
-  
-
   const newBookingInformation = {
     userId,
     bikeId,
@@ -49,7 +46,7 @@ const createBookingIntoDB = async (payload: {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   // Create the booking
@@ -57,86 +54,70 @@ const createBookingIntoDB = async (payload: {
   return result;
 };
 
-
-
 //return bike for admin route
 
-const returnBikeIntoDB = async (id:string)=> {
-  
- const isBookingExists = await BookingModel.findOne({
-   _id: id,
- });
+const returnBikeIntoDB = async (id: string) => {
+  const isBookingExists = await BookingModel.findOne({
+    _id: id,
+  });
 
-  
- if (!isBookingExists) {
-   throw new AppError(httpStatus.NOT_FOUND, "Booking not available");
- }
+  if (!isBookingExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "Booking not available");
+  }
 
   const findBikeModelID = isBookingExists.bikeId;
 
-const bikeId = await BikeModel.findById({
-  _id: findBikeModelID
-});
+  const bikeId = await BikeModel.findById({
+    _id: findBikeModelID,
+  });
 
   const timePer: any = bikeId?.pricePerHour;
 
-  
- const StartTime: any = isBookingExists?.startTime;
- const returnTime: any = new Date();
+  const StartTime: any = isBookingExists?.startTime;
+  const returnTime: any = new Date();
   const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
-  
-  const totalCost: number = Math.round(totalTime * timePer); ;
+
+  const totalCost: number = Math.round(totalTime * timePer);
 
   // updated bike available
-  
+
   await BikeModel.findByIdAndUpdate(
-     findBikeModelID,
+    findBikeModelID,
     { isAvailable: true },
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   //updated booking model
 
   await BookingModel.findByIdAndUpdate(
     isBookingExists,
-    { returnTime: new Date(),
-     totalCost: totalCost ,
-     isReturned: true },
+    { returnTime: new Date(), totalCost: totalCost, isReturned: true },
 
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
-
-  
 };
 
-
 const showAllRentFromDB = async (User: any) => {
+  const isUserExist = await UserModel.findOne({
+    email: User.email,
+  });
 
-const isUserExist = await UserModel.findOne({
-  email: User.email,
-});
-
-
-  
   const userId = isUserExist?._id;
-  
+
   //find booking model that user booking exist or not
-  
+
   const isBookingExists = await BookingModel.find({
     userId: userId,
   });
 
   return isBookingExists;
-
 };
-
-
 
 export const BookingService = {
   createBookingIntoDB,

@@ -23,7 +23,7 @@ const auth = (...requiredRoles) => {
         if (!token) {
             throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized");
         }
-        const tokenSplit = token === null || token === void 0 ? void 0 : token.split(" ");
+        const tokenSplit = token.split(" ");
         try {
             // Verify token
             const decoded = jsonwebtoken_1.default.verify(tokenSplit[1], config_1.default.jwt_access_secret);

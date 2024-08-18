@@ -4,14 +4,11 @@ import sendResponse from "../../utils/sendResponse";
 import { BookingService } from "./booking.service";
 import { JwtPayload } from "jsonwebtoken";
 
-
-
 const createBooking = catchAsync(async (req, res) => {
-  
-    const payload = {
-      rentalInformation: req.body,
-      authUserInformation: req.user,
-    };
+  const payload = {
+    rentalInformation: req.body,
+    authUserInformation: req.user,
+  };
 
   const result = await BookingService.createBookingIntoDB(payload);
 
@@ -25,30 +22,21 @@ const createBooking = catchAsync(async (req, res) => {
 
 //return Bike for admin route
 
-
 const returnBike = catchAsync(async (req, res) => {
-
-  const { id } = req.params
- 
+  const { id } = req.params;
 
   const result = await BookingService.returnBikeIntoDB(id);
 
-
-
-
-  
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Bike return successfully",
     data: result,
   });
-
- });
+});
 
 //show user full rental data
 const allBikeRentals = catchAsync(async (req, res) => {
-  
   const User = req.user;
   const result = await BookingService.showAllRentFromDB(User);
 
@@ -59,9 +47,6 @@ const allBikeRentals = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
-
-
 
 export const BookingController = {
   createBooking,

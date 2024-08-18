@@ -12,7 +12,8 @@ const auth = (...requiredRoles: TUserRole[]) => {
     if (!token) {
       throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized");
     }
-const tokenSplit = token?.split(" ");
+    
+    const tokenSplit = token.split(" ");
     try {
       // Verify token
       const decoded = jwt.verify(
@@ -24,7 +25,7 @@ const tokenSplit = token?.split(" ");
       req.user = decoded;
 
       // Role checking
-      const role = (decoded as JwtPayload).role;
+      const role = decoded.role;
       if (requiredRoles.length === 0 || requiredRoles.includes(role)) {
         return next();
       }

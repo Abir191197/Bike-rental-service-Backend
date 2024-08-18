@@ -17,6 +17,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
+const appError_1 = __importDefault(require("../../errors/appError"));
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield bike_service_1.bikeService.createBikeIntoDB(req.body);
     (0, sendResponse_1.default)(res, {
@@ -31,16 +32,20 @@ const GetAllBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "All bike get successfully",
+        message: "All bikes retrieved successfully",
         data: result,
     });
 }));
 const updatedBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Ensure req.user is properly typed
+    if (!req.user) {
+        throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "User not authenticated");
+    }
     const result = yield bike_service_1.bikeService.updatedBikeIntoDB(req.user, req.body);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "bike updated successfully",
+        message: "Bike updated successfully",
         data: result,
     });
 }));
@@ -49,7 +54,7 @@ const deleteBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "bike delete successfully",
+        message: "Bike deleted successfully",
     });
 }));
 exports.bikeController = {

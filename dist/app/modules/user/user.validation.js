@@ -15,7 +15,7 @@ const userValidationSchema = zod_1.z.object({
             .min(10, { message: "Phone number must be at least 10 characters" }),
         address: zod_1.z.string().min(1, { message: "Address is required" }),
         role: zod_1.z.enum(["admin", "user"]),
-    })
+    }),
 });
 exports.UserValidation = {
     userValidationSchema,

@@ -63,23 +63,20 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     }
     const findBikeModelID = isBookingExists.bikeId;
     const bikeId = yield bike_model_1.default.findById({
-        _id: findBikeModelID
+        _id: findBikeModelID,
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.pricePerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
     const returnTime = new Date();
     const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
-    ;
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {
         new: true,
         runValidators: true,
     });
     //updated booking model
-    yield booking_model_1.default.findByIdAndUpdate(isBookingExists, { returnTime: new Date(),
-        totalCost: totalCost,
-        isReturned: true }, {
+    yield booking_model_1.default.findByIdAndUpdate(isBookingExists, { returnTime: new Date(), totalCost: totalCost, isReturned: true }, {
         new: true,
         runValidators: true,
     });

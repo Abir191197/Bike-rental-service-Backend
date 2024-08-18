@@ -20,16 +20,16 @@ const signIn = catchAsync(async (req: Request, res: Response) => {
 // LogIn function
 const logIn = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.logInUser(req.body);
-  const { accessToken ,refreshToken} = result; // Assuming the result includes accessToken
-res.cookie("refreshToken", refreshToken, {
-  secure: config.NODE_ENV === "production",
-  httpOnly: true,
-});
+  const { accessToken, refreshToken } = result; // Assuming the result includes accessToken
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.NODE_ENV === "production",
+    httpOnly: true,
+  });
 
-res.cookie("accessToken", accessToken, {
-  secure: config.NODE_ENV === "production",
-  httpOnly: true,
-});
+  res.cookie("accessToken", accessToken, {
+    secure: config.NODE_ENV === "production",
+    httpOnly: true,
+  });
 
   // Example user data
   const userData = {
@@ -64,8 +64,19 @@ const refreshAccessToken = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const google = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user; // User info from Passport
+
+  // Optionally log user information for debugging
+  //console.log(`Authenticated user: ${user?.email}`);
+
+  // Redirect to your dashboard or desired page
+  res.redirect("/dashboard");
+});
+
 export const AuthControllers = {
   signIn,
   logIn,
   refreshAccessToken,
+  google,
 };

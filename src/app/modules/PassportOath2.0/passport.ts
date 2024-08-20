@@ -2,6 +2,8 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import UserModel from "../user/user.model"; // Adjust path as needed
 import config from "../../../config"; // Adjust path as needed
+import { AuthServices } from "../Auth/auth.service";
+
 
 // Serialize user for session persistence
 passport.serializeUser((user: any, done) => {
@@ -23,31 +25,31 @@ passport.use(
   new GoogleStrategy(
     {
       clientID: config.GOOGLE_CLIENT_ID as string,
-      clientSecret: config.GOOGLE_CLIENT_SECRET as string, // Removed extra space
-      callbackURL: "http://localhost:3000/api/auth/google/callback", // Ensure this matches your Google Developer Console
+      clientSecret: config.GOOGLE_CLIENT_SECRET as string,
+      callbackURL: "http://localhost:5173/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Find user by Google ID or create a new user
-        let user = await UserModel.findOne({ googleId: profile.id });
+        const email = profile.emails?.[0].value;
+        let user = await UserModel.findOne({ email });
 
         if (!user) {
-          user = await UserModel.create({
+          // If user doesn't exist, create a new user using AuthService
+          user = await AuthServices.googleAuth({
             googleId: profile.id,
             name: profile.displayName,
-            email: profile.emails?.[0].value,
-            profilePicture: profile._json.picture, // Optional: Save profile picture
-            role: "user", // Assign a default role
+            email: email,
+            profilePicture: profile.photos?.[0].value,
           });
         }
 
         return done(null, user);
       } catch (err) {
-        console.error("Error during OAuth callback:", err); // Log error for debugging
+        console.error("Error during OAuth callback:", err);
         return done(err);
       }
-    },
-  ),
+    }
+  )
 );
 
 export default passport;

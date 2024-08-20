@@ -6,18 +6,32 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import { TUserRole } from "../modules/user/user.interface";
 
+// Extending Request type to include user property
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: JwtPayload;
+  }
+}
+
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
-    if (!token) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized");
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "Authorization token missing or malformed"
+      );
     }
-    
-    const tokenSplit = token.split(" ");
+
+    const token = authorizationHeader.split(" ")[1];
+    if (!token) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Token not provided");
+    }
+
     try {
       // Verify token
       const decoded = jwt.verify(
-        tokenSplit[1],
+        token,
         config.jwt_access_secret as string
       ) as JwtPayload;
 
@@ -36,8 +50,14 @@ const auth = (...requiredRoles: TUserRole[]) => {
         "You do not have permission to access this resource"
       );
     } catch (error) {
-      // Handle token verification errors
-      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token");
+      if (error.name === "TokenExpiredError") {
+        throw new AppError(
+          httpStatus.UNAUTHORIZED,
+          "Token has expired, please log in again"
+        );
+      }
+      // Handle other token verification errors
+      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid or expired token");
     }
   });
 };

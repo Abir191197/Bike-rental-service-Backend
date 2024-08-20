@@ -13,15 +13,27 @@ const app = express();
 // Parsers
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://cox-s-sea-side-bike-frontend.vercel.app",
-    ], // Specify the allowed origin(s)
-    credentials: true, // Allow credentials (cookies, authorization headers)
-  }),
-);
+
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://cox-s-sea-side-bike-frontend.vercel.app",
+  ],
+  credentials: true,
+  methods: "GET,POST,PUT,DELETE",
+  optionsSuccessStatus: 200,
+  allowedHeaders: "Content-Type, Authorization",
+};
+
+app.all("/*", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+// CORS Middleware
+app.use(cors(corsOptions));
+
+// Handle CORS Preflight requests
+app.options("*", cors(corsOptions));
 
 // Session middleware
 app.use(
@@ -29,8 +41,12 @@ app.use(
     secret: config.SESSION_SECRET as string, // Replace with your own secret
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }, // Set to `true` if using HTTPS
-  }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // Only use secure cookies in production with HTTPS
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
 );
 
 // Initialize Passport

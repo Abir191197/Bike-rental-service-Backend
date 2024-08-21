@@ -17,26 +17,6 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const user_service_1 = require("./user.service");
-// Controller to handle creating a new user
-const createUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const result = yield user_service_1.UserService.createUserIntoDB(req.body);
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.CREATED,
-            success: true,
-            message: "User is created successfully",
-            data: result,
-        });
-    }
-    catch (error) {
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.INTERNAL_SERVER_ERROR,
-            success: false,
-            message: "Failed to create user",
-            data: null,
-        });
-    }
-}));
 // Controller to handle retrieving a user profile
 const findUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user) {
@@ -96,7 +76,6 @@ const updatedUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     }
 }));
 exports.userControllers = {
-    createUser,
     findUser,
     updatedUser,
 };

@@ -10,7 +10,6 @@ const APInotfound_1 = __importDefault(require("./app/middlewares/APInotfound"));
 const cors_1 = __importDefault(require("cors"));
 const routes_1 = __importDefault(require("./app/routes"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const passport_1 = __importDefault(require("./app/modules/PassportOath2.0/passport"));
 const config_1 = __importDefault(require("./config"));
 const app = (0, express_1.default)();
 // Parsers
@@ -41,8 +40,8 @@ app.use((0, express_session_1.default)({
     },
 }));
 // Initialize Passport
-app.use(passport_1.default.initialize());
-app.use(passport_1.default.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 // Routes
 app.get("/", (req, res) => {
     res.send("Hello from setup file");

@@ -13,16 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
 const appError_1 = __importDefault(require("../../errors/appError"));
 const user_model_1 = __importDefault(require("./user.model"));
 const http_status_1 = __importDefault(require("http-status"));
-const createUserIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const hashedPassword = yield bcrypt_1.default.hash(payload.password, 10);
-    payload.password = hashedPassword;
-    const result = yield user_model_1.default.create(payload);
-    return result;
-});
 const findUserFromDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (payload !== null) {
@@ -54,7 +47,6 @@ const updatedUserIntoDB = (payload, updateData) => __awaiter(void 0, void 0, voi
     }
 });
 exports.UserService = {
-    createUserIntoDB,
     findUserFromDB,
     updatedUserIntoDB,
 };

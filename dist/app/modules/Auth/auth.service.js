@@ -30,10 +30,22 @@ const user_model_1 = __importDefault(require("../user/user.model"));
 const appError_1 = __importDefault(require("../../errors/appError"));
 const jwt_1 = require("../../utils/jwt");
 const config_1 = __importDefault(require("../../../config"));
+const getNextGoogleId = () => __awaiter(void 0, void 0, void 0, function* () {
+    const maxUser = yield user_model_1.default.findOne({}, { googleId: 1 })
+        .sort({ googleId: -1 })
+        .exec();
+    if (!maxUser || maxUser.googleId === null) {
+        return 1; // Start from 1 if no users exist or if all `googleId`s are null
+    }
+    return maxUser.googleId + 1; // Increment the highest value
+});
 // SignInUser function
 const signInUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(payload.password, 10);
     payload.password = hashedPassword;
+    // Generate new googleId by incrementing the highest existing googleId
+    const newGoogleId = yield getNextGoogleId();
+    payload.googleId = String(newGoogleId);
     const result = yield user_model_1.default.create(payload);
     const _a = result.toObject(), { password } = _a, userWithoutSensitiveFields = __rest(_a, ["password"]);
     return userWithoutSensitiveFields;

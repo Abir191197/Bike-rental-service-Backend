@@ -30,7 +30,7 @@ const signInUser = async (payload: TUser) => {
 
   // Generate new googleId by incrementing the highest existing googleId
   const newGoogleId = await getNextGoogleId();
-  payload.googleId = newGoogleId;
+  payload.googleId = String(newGoogleId);
 
   const result = await UserModel.create(payload);
   const { password, ...userWithoutSensitiveFields } = result.toObject();

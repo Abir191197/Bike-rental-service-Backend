@@ -11,10 +11,27 @@ import {
 } from "../../utils/jwt";
 import config from "../../../config";
 
+
+
+const getNextGoogleId = async () => {
+  const maxUser = await UserModel.findOne({}, { googleId: 1 })
+    .sort({ googleId: -1 })
+    .exec();
+  if (!maxUser || maxUser.googleId === null) {
+    return 1; // Start from 1 if no users exist or if all `googleId`s are null
+  }
+  return maxUser.googleId + 1; // Increment the highest value
+};
+
 // SignInUser function
 const signInUser = async (payload: TUser) => {
   const hashedPassword = await bcrypt.hash(payload.password, 10);
   payload.password = hashedPassword;
+
+  // Generate new googleId by incrementing the highest existing googleId
+  const newGoogleId = await getNextGoogleId();
+  payload.googleId = newGoogleId;
+
   const result = await UserModel.create(payload);
   const { password, ...userWithoutSensitiveFields } = result.toObject();
   return userWithoutSensitiveFields;
@@ -55,19 +72,16 @@ const refreshToken = async (token: string) => {
   return { accessToken: newAccessToken };
 };
 
-// GoogleAuth function
-const googleAuth = async (user: any) => {
-  let existingUser = await UserModel.findOne({ email: user.email });
 
+
+// GoogleAuth function
+
+const googleAuth = async (user: any) => {
+
+  console.log(user);
+  let existingUser = await UserModel.findOne({ email: user.email });
   if (!existingUser) {
-    // Create a new user if they don't exist
-    existingUser = await UserModel.create({
-      googleId: user.googleId,
-      name: user.name,
-      email: user.email,
-      profilePicture: user.profilePicture,
-      role: "user", // Default role for Google users
-    });
+    throw new Error("User not found");
   }
 
   // Generate tokens
@@ -77,6 +91,7 @@ const googleAuth = async (user: any) => {
 
   return { existingUser, accessToken, refreshToken };
 };
+
 
 export const AuthServices = {
   signInUser,

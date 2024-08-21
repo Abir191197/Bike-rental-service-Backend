@@ -19,14 +19,17 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../../config"));
 const auth = (...requiredRoles) => {
     return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        const token = req.headers.authorization;
-        if (!token) {
-            throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized");
+        const authorizationHeader = req.headers.authorization;
+        if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
+            throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "Authorization token missing or malformed");
         }
-        const tokenSplit = token.split(" ");
+        const token = authorizationHeader.split(" ")[1];
+        if (!token) {
+            throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "Token not provided");
+        }
         try {
             // Verify token
-            const decoded = jsonwebtoken_1.default.verify(tokenSplit[1], config_1.default.jwt_access_secret);
+            const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
             // Assign decoded payload to request object
             req.user = decoded;
             // Role checking
@@ -38,8 +41,11 @@ const auth = (...requiredRoles) => {
             throw new appError_1.default(http_status_1.default.FORBIDDEN, "You do not have permission to access this resource");
         }
         catch (error) {
-            // Handle token verification errors
-            throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "Invalid token");
+            if (error === "TokenExpiredError") {
+                throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "Token has expired, please log in again");
+            }
+            // Handle other token verification errors
+            throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "Invalid or expired token");
         }
     }));
 };

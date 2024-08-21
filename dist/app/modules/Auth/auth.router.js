@@ -16,5 +16,9 @@ router.post("/login", (0, validateRequest_1.default)(auth_validation_1.AuthValid
 router.post("/refresh-token", (0, validateRequest_1.default)(auth_validation_1.AuthValidation.refreshTokenValidationSchema), auth_controller_1.AuthControllers.refreshAccessToken);
 // Google OAuth routes
 router.get("/google", passport_1.default.authenticate("google", { scope: ["profile", "email"] }));
-router.get("/google/callback", passport_1.default.authenticate("google", { failureRedirect: "/login" }), auth_controller_1.AuthControllers.google);
+router.get("/google/callback", passport_1.default.authenticate("google", {
+    failureRedirect: "/login",
+    successRedirect: "http://localhost:5173/dashboard",
+}), auth_controller_1.AuthControllers.google // Use catchAsync to handle errors
+);
 exports.AuthRoutes = router;

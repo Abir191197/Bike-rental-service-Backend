@@ -3,26 +3,7 @@ import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { UserService } from "./user.service";
 
-// Controller to handle creating a new user
-const createUser = catchAsync(async (req, res) => {
-  try {
-    const result = await UserService.createUserIntoDB(req.body);
 
-    sendResponse(res, {
-      statusCode: httpStatus.CREATED,
-      success: true,
-      message: "User is created successfully",
-      data: result,
-    });
-  } catch (error) {
-    sendResponse(res, {
-      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-      success: false,
-      message: "Failed to create user",
-      data: null,
-    });
-  }
-});
 
 // Controller to handle retrieving a user profile
 const findUser = catchAsync(async (req, res) => {
@@ -87,7 +68,7 @@ const updatedUser = catchAsync(async (req, res) => {
 });
 
 export const userControllers = {
-  createUser,
+ 
   findUser,
   updatedUser,
 };

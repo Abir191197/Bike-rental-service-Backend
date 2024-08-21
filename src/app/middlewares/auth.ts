@@ -50,7 +50,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
         "You do not have permission to access this resource"
       );
     } catch (error) {
-      if (error.name === "TokenExpiredError") {
+      if (error === "TokenExpiredError") {
         throw new AppError(
           httpStatus.UNAUTHORIZED,
           "Token has expired, please log in again"

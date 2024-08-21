@@ -5,12 +5,6 @@ import { TUser } from "./user.interface";
 import UserModel from "./user.model";
 import httpStatus from "http-status";
 
-const createUserIntoDB = async (payload: TUser) => {
-  const hashedPassword = await bcrypt.hash(payload.password, 10);
-  payload.password = hashedPassword;
-  const result = await UserModel.create(payload);
-  return result;
-};
 
 const findUserFromDB = async (payload: JwtPayload | null) => {
   try {
@@ -51,7 +45,7 @@ const updatedUserIntoDB = async (
 };
 
 export const UserService = {
-  createUserIntoDB,
+ 
   findUserFromDB,
   updatedUserIntoDB,
 };

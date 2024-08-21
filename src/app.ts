@@ -14,6 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// CORS Options
 const corsOptions = {
   origin: [
     "http://localhost:5173",
@@ -25,33 +26,26 @@ const corsOptions = {
   allowedHeaders: "Content-Type, Authorization",
 };
 
-app.all("/*", function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
 // CORS Middleware
 app.use(cors(corsOptions));
-
-// Handle CORS Preflight requests
-app.options("*", cors(corsOptions));
 
 // Session middleware
 app.use(
   session({
-    secret: config.SESSION_SECRET as string, // Replace with your own secret
+    secret: config.SESSION_SECRET as string, // Ensure this is set in your environment
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Only use secure cookies in production with HTTPS
+      secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
   })
 );
 
 // Initialize Passport
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 // Routes
 app.get("/", (req: Request, res: Response) => {

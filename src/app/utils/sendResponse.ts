@@ -1,5 +1,4 @@
 import { Response } from "express";
-import httpStatus from "http-status";
 
 interface ApiResponse<T> {
   statusCode: number;

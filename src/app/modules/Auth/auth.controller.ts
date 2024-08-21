@@ -6,6 +6,25 @@ import { AuthServices } from "./auth.service";
 import config from "../../../config";
 import AppError from "../../errors/appError";
 
+// Helper function to set authentication cookies
+const setAuthCookies = (
+  res: Response,
+  accessToken: string,
+  refreshToken: string
+) => {
+  res.cookie("refreshToken", refreshToken, {
+    secure: config.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "strict",
+  });
+
+  res.cookie("accessToken", accessToken, {
+    secure: config.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "strict",
+  });
+};
+
 // SignIn function
 const signIn = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.signInUser(req.body);
@@ -24,17 +43,7 @@ const logIn = catchAsync(async (req: Request, res: Response) => {
   const { accessToken, refreshToken } = result;
 
   // Set HttpOnly and Secure cookies for refreshToken and accessToken
-  res.cookie("refreshToken", refreshToken, {
-    secure: config.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "strict", // Prevent CSRF attacks
-  });
-
-  res.cookie("accessToken", accessToken, {
-    secure: config.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "strict",
-  });
+  setAuthCookies(res, accessToken, refreshToken);
 
   // Filter user data to exclude sensitive information
   const userData = {
@@ -82,35 +91,44 @@ const refreshAccessToken = catchAsync(async (req: Request, res: Response) => {
 });
 
 // Google OAuth callback
-
 const google = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
+  console.log(user); // Consider replacing this with proper logging in production
 
   if (!user) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Google authentication failed");
+    // Redirect to the login page or any other appropriate action
+    return res.redirect("/");
   }
 
   // Call AuthServices.googleAuth to get or create the user and generate tokens
-  const { existingUser, accessToken, refreshToken } = await AuthServices.googleAuth(user);
+  const { existingUser, accessToken, refreshToken } =
+    await AuthServices.googleAuth(user);
+  
+  
+
 
   // Set cookies for access and refresh tokens
-  res.cookie("refreshToken", refreshToken, {
-    secure: config.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "strict",
+  setAuthCookies(res, accessToken, refreshToken);
+
+  const userData = {
+    _id: existingUser._id,
+    name: existingUser.name,
+    email: existingUser.email,
+    phone: existingUser.phone,
+    address: existingUser.address,
+    role: existingUser.role,
+  };
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User logged in successfully",
+    token: accessToken,
+    data: userData,
   });
 
-  res.cookie("accessToken", accessToken, {
-    secure: config.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "strict",
-  });
-
-  // Redirect to the desired page after successful authentication
-  res.redirect("/dashboard"); // Adjust as per your client-side routing
+ 
 });
-
-
 
 export const AuthControllers = {
   signIn,

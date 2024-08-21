@@ -28,8 +28,8 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const http_status_1 = __importDefault(require("http-status"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const appError_1 = __importDefault(require("../../errors/appError"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = __importDefault(require("../../../config")); // Assuming you have a configuration file
+const jwt_1 = require("../../utils/jwt");
+const config_1 = __importDefault(require("../../../config"));
 // SignInUser function
 const signInUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(payload.password, 10);
@@ -46,98 +46,39 @@ const logInUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         throw new appError_1.default(http_status_1.default.NOT_FOUND, "This user is not found!");
     }
     const isMatch = yield bcrypt_1.default.compare(payload === null || payload === void 0 ? void 0 : payload.password, user.password);
-    // Creating a JWT token upon successful login
-    const jwtPayload = {
-        email: user.email,
-        role: user.role, // Assuming user has a role attribute
-    };
-    const accessToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_access_secret, {
-        expiresIn: "10d",
-    });
-    const refreshToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_access_secret, {
-        expiresIn: "30d",
-    });
-    return { user, accessToken, refreshToken }; // Return the user, access token, and refresh token
+    if (!isMatch) {
+        throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "Invalid credentials!");
+    }
+    // Generate tokens
+    const jwtPayload = { email: user.email, role: user.role };
+    const accessToken = (0, jwt_1.generateAccessToken)(jwtPayload);
+    const refreshToken = (0, jwt_1.generateRefreshToken)(jwtPayload);
+    return { user, accessToken, refreshToken };
 });
 // RefreshToken function
 const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
-    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
+    const decoded = (0, jwt_1.verifyToken)(token, config_1.default.jwt_access_secret);
     const { email, role } = decoded;
-    const jwtPayload = {
-        email,
-        role,
-    };
-    const newAccessToken = jsonwebtoken_1.default.sign(jwtPayload, config_1.default.jwt_access_secret, {
-        expiresIn: "10d",
-    });
-    return {
-        accessToken: newAccessToken,
-    };
+    const jwtPayload = { email, role };
+    const newAccessToken = (0, jwt_1.generateAccessToken)(jwtPayload);
+    return { accessToken: newAccessToken };
 });
-// Exporting AuthServices
+// GoogleAuth function
+const googleAuth = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(user);
+    let existingUser = yield user_model_1.default.findOne({ email: user.email });
+    if (!existingUser) {
+        throw new Error("User not found");
+    }
+    // Generate tokens
+    const jwtPayload = { email: existingUser.email, role: existingUser.role };
+    const accessToken = (0, jwt_1.generateAccessToken)(jwtPayload);
+    const refreshToken = (0, jwt_1.generateRefreshToken)(jwtPayload);
+    return { existingUser, accessToken, refreshToken };
+});
 exports.AuthServices = {
     signInUser,
     logInUser,
     refreshToken,
+    googleAuth,
 };
-// import httpStatus from "http-status";
-// import UserModel from "../user/user.model";
-// import { TLoginUser } from "./auth.interface";
-// import AppError from "../../errors/appError";
-// import { TUser } from "../user/user.interface";
-// import jwt from "jsonwebtoken";
-// import config from "../../../config/index"; // Assuming you have a configuration file
-// import { JwtPayload } from "jsonwebtoken";
-// const signInUser = async (payload: TUser) => {
-//   const result = await UserModel.create(payload);
-//     const {
-//       password,
-//       ...userWithoutSensitiveFields
-//     } = result.toObject();
-//   return userWithoutSensitiveFields;
-// };
-// //login start from here
-// const LogInUser = async (payload: TLoginUser) => {
-//   // checking if the user exists
-//   const user = await UserModel.findOne({ email: payload?.email }).select(
-//     "-password"
-//   );
-//   if (!user) {
-//     throw new AppError(httpStatus.NOT_FOUND, "This user is not found!");
-//   }
-//   // Assuming you want to create a JWT token upon successful login
-//   const jwtPayload: JwtPayload = {
-//     email: user.email,
-//     role: user.role, // Assuming user has a role attribute
-//   };
-//   const accessToken = jwt.sign(
-//     jwtPayload,
-//     config.jwt_access_secret as string,
-//     { expiresIn: "10d" } // Corrected expiresIn format
-//   );
-//   return { user, accessToken }; // Return the user and the access token
-// };
-// const refreshToken = async (token: string) => {
-//   const decoded = jwt.verify(
-//     token,
-//     config.jwt_access_secret as string
-//   ) as JwtPayload;
-//  const { email, role } = decoded;
-//   const jwtPayload = {
-//     email: email,
-//     role:  role,
-//   };
-//   const accessToken = jwt.sign(
-//     jwtPayload,
-//     config.jwt_access_secret as string,
-//     { expiresIn: "10d" } // Corrected expiresIn format
-//   );
-// return {
-//   accessToken,
-// };
-// }
-// export const AuthServices = {
-//   signInUser,
-//   LogInUser,
-//   refreshToken,
-// };

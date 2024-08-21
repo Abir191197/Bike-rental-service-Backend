@@ -8,10 +8,10 @@ const UserSchema = new Schema<TUser>(
     password: { type: String },
     phone: { type: String },
     address: { type: String },
-    googleId: { type: String, unique: true },
+    googleId: { type: String },
     role: { type: String, enum: ["admin", "user"], required: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const UserModel = mongoose.model<TUser>("Users", UserSchema, "Users");

@@ -30,7 +30,6 @@ const UserSchema = new mongoose_1.Schema({
     password: { type: String },
     phone: { type: String },
     address: { type: String },
-    googleId: { type: String, unique: true },
     role: { type: String, enum: ["admin", "user"], required: true },
 }, { timestamps: true });
 const UserModel = mongoose_1.default.model("Users", UserSchema, "Users");

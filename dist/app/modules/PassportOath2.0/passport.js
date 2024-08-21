@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
 const passport_google_oauth20_1 = require("passport-google-oauth20");
-const user_model_1 = __importDefault(require("../user/user.model")); // Adjust path as needed
 const config_1 = __importDefault(require("../../../config")); // Adjust path as needed
+const user_model_1 = __importDefault(require("../user/user.model")); // Adjust path as needed
 // Serialize user for session persistence
 passport_1.default.serializeUser((user, done) => {
     done(null, user.id);
@@ -33,26 +33,21 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
 // Configure Google OAuth strategy
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: config_1.default.GOOGLE_CLIENT_ID,
-    clientSecret: config_1.default.GOOGLE_CLIENT_SECRET, // Removed extra space
-    callbackURL: "http://localhost:3000/api/auth/google/callback", // Ensure this matches your Google Developer Console
+    clientSecret: config_1.default.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/api/auth/google/callback",
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        // Find user by Google ID or create a new user
-        let user = yield user_model_1.default.findOne({ googleId: profile.id });
+        const email = (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0].value;
+        let user = yield user_model_1.default.findOne({ email });
         if (!user) {
-            user = yield user_model_1.default.create({
-                googleId: profile.id,
-                name: profile.displayName,
-                email: (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0].value,
-                profilePicture: profile._json.picture, // Optional: Save profile picture
-                role: "user", // Assign a default role
-            });
+            // If user doesn't exist, don't create a new user
+            return done(new Error("User not found"));
         }
         return done(null, user);
     }
     catch (err) {
-        console.error("Error during OAuth callback:", err); // Log error for debugging
+        console.error("Error during OAuth callback:", err);
         return done(err);
     }
 })));

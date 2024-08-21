@@ -28,13 +28,16 @@ router.post(
 // Google OAuth routes
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] }),
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  AuthControllers.google,
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    successRedirect: "http://localhost:5173/dashboard",
+  }),
+  AuthControllers.google // Use catchAsync to handle errors
 );
 
 export const AuthRoutes = router;

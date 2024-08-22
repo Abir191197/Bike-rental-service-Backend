@@ -52,7 +52,9 @@ router.get('/google/callback', (req, res, next) => __awaiter(void 0, void 0, voi
             // Perform Google authentication
             const { accessToken, refreshToken } = yield googleAuth(user);
             // Redirect with token
-            res.redirect(config_1.default.Google_Redirect_Url);
+            const redirectUrl = `${config_1.default.Google_Redirect_Url}?access_token=${accessToken}&refresh_token=${refreshToken}`;
+            // Redirect to the frontend with the tokens
+            res.redirect(redirectUrl);
         }
         catch (error) {
             console.error('Error during authentication:', error);

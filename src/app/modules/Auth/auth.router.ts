@@ -65,9 +65,10 @@ router.get('/google/callback', async (req, res, next) => {
       const { accessToken, refreshToken } = await googleAuth(user);
 
       // Redirect with token
-      res.redirect(
-        config.Google_Redirect_Url as string
-      );
+       const redirectUrl = `${config.Google_Redirect_Url}?access_token=${accessToken}&refresh_token=${refreshToken}`;
+
+       // Redirect to the frontend with the tokens
+       res.redirect(redirectUrl);
     } catch (error) {
       console.error('Error during authentication:', error);
       res.redirect('/login'); // Redirect to login on error

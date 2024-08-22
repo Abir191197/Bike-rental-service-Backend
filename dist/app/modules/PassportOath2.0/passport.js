@@ -34,14 +34,14 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: config_1.default.GOOGLE_CLIENT_ID,
     clientSecret: config_1.default.GOOGLE_CLIENT_SECRET,
-    callbackURL: config_1.default.callbackURL
+    callbackURL: "https://bike-rental-service-backend-two.vercel.app/api/auth/google/callback",
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const email = (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0].value;
         let user = yield user_model_1.default.findOne({ email });
         if (!user) {
-            // If user doesn't exist, don't create a new user
+            // Handle user creation or other logic
             return done(new Error("User not found"));
         }
         return done(null, user);

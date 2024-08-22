@@ -4,84 +4,80 @@ import { AuthValidation } from "./auth.validation";
 import { AuthControllers } from "./auth.controller";
 import { UserValidation } from "../user/user.validation";
 import passport from "../PassportOath2.0/passport";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import UserModel from "../user/user.model";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
-import config from "../../../config";
 const router = express.Router();
 
+// Sign up route
 router.post(
   "/signup",
   validateRequest(UserValidation.userValidationSchema),
-  AuthControllers.signIn,
+  AuthControllers.signIn
 );
 
+// Log in route
 router.post(
   "/login",
   validateRequest(AuthValidation.loginValidationSchema),
-  AuthControllers.logIn,
+  AuthControllers.logIn
 );
 
+// Refresh token route
 router.post(
   "/refresh-token",
   validateRequest(AuthValidation.refreshTokenValidationSchema),
-  AuthControllers.refreshAccessToken,
+  AuthControllers.refreshAccessToken
 );
 
-// Google OAuth routes
+// Google OAuth route
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// Function to generate tokens
-
-
 // Function to find or create a user
-const googleAuth = async (user: { email: any }) => {
-  const flowName = "GeneralOAuthFlow"; // Adding the flow name for tracing
-
-  try {
-    let existingUser = await UserModel.findOne({ email: user.email });
-    if (!existingUser) {
-      console.error(`User not found in ${flowName}`);
-      throw new Error("User not found");
-    }
-
-    const jwtPayload = { email: existingUser.email, role: existingUser.role };
-    const accessToken = generateAccessToken(jwtPayload);
-    const refreshToken = generateRefreshToken(jwtPayload);
-
-    return { existingUser, accessToken, refreshToken };
-  } catch (error) {
-    console.error(`Error in ${flowName}:`, error);
-    throw error; // Re-throw to be caught in the route handler
+const googleAuth = async (user: { email: string }) => {
+  let existingUser = await UserModel.findOne({ email: user.email });
+  if (!existingUser) {
+    // Optionally handle user creation here if desired
+    throw new Error("User not found");
   }
+
+  // Generate tokens
+  const jwtPayload = { email: existingUser.email, role: existingUser.role };
+  const accessToken = generateAccessToken(jwtPayload);
+  const refreshToken = generateRefreshToken(jwtPayload);
+
+  return { existingUser, accessToken, refreshToken };
 };
 
-
 // Google OAuth callback route
-router.get('/google/callback', async (req, res, next) => {
-  passport.authenticate('google', { session: false }, async (err, user, info) => {
-    const flowName = "GeneralOAuthFlow"; // Adding the flow name for tracing
+router.get("/google/callback", async (req, res, next) => {
+  passport.authenticate(
+    "google",
+    { session: false },
+    async (err, user, info) => {
+      if (err || !user) {
+        console.error("Authentication error:", err || "User not authenticated");
+        return res.redirect("/login"); // Redirect to login on error
+      }
 
-    if (err || !user) {
-      console.error(`Error in ${flowName}:`, err || "User not authenticated");
-      return res.redirect('/login'); // Redirect to login on error
+      try {
+        // Perform Google authentication
+        const { accessToken, refreshToken } = await googleAuth(user);
+
+        // Redirect with token
+        const frontendUrl =
+          "https://cox-s-sea-side-bike-frontend.vercel.app/Login";
+        res.redirect(
+          `${frontendUrl}?access_token=${accessToken}&refresh_token=${refreshToken}`
+        );
+      } catch (error) {
+        console.error("Error during authentication:", error);
+        res.redirect("/login"); // Redirect to login on error
+      }
     }
-
-    try {
-      // Perform Google authentication
-      const { accessToken, refreshToken } = await googleAuth(user);
-
-      // Redirect to the frontend with the tokens
-      const redirectUrl = `${config.callbackURL}?access_token=${accessToken}&refresh_token=${refreshToken}`;
-      res.redirect(redirectUrl);
-    } catch (error) {
-      console.error(`Error during ${flowName}:`, error);
-      res.redirect('/login'); // Redirect to login on error
-    }
-  })(req, res, next);
+  )(req, res, next);
 });
 
 export const AuthRoutes = router;

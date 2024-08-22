@@ -9,7 +9,7 @@ passport.serializeUser((user: any, done) => {
 });
 
 // Deserialize user from session
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (id: string, done) => {
   try {
     const user = await UserModel.findById(id);
     done(null, user);
@@ -24,15 +24,15 @@ passport.use(
     {
       clientID: config.GOOGLE_CLIENT_ID as string,
       clientSecret: config.GOOGLE_CLIENT_SECRET as string,
-      callbackURL:config.callbackURL as string
-       
+      callbackURL:
+        "https://bike-rental-service-backend-two.vercel.app/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const email = profile.emails?.[0].value;
         let user = await UserModel.findOne({ email });
         if (!user) {
-          // If user doesn't exist, don't create a new user
+          // Handle user creation or other logic
           return done(new Error("User not found"));
         }
         return done(null, user);
@@ -43,5 +43,6 @@ passport.use(
     }
   )
 );
+ 
 
 export default passport;

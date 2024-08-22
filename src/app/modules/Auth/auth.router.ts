@@ -38,25 +38,35 @@ router.get(
 
 
 // Function to find or create a user
-const googleAuth = async (user: { email: any; }) => {
-  let existingUser = await UserModel.findOne({ email: user.email });
-  if (!existingUser) {
-    // Handle user creation or other logic as needed
-    throw new Error("User not found");
+const googleAuth = async (user: { email: any }) => {
+  const flowName = "GeneralOAuthFlow"; // Adding the flow name for tracing
+
+  try {
+    let existingUser = await UserModel.findOne({ email: user.email });
+    if (!existingUser) {
+      console.error(`User not found in ${flowName}`);
+      throw new Error("User not found");
+    }
+
+    const jwtPayload = { email: existingUser.email, role: existingUser.role };
+    const accessToken = generateAccessToken(jwtPayload);
+    const refreshToken = generateRefreshToken(jwtPayload);
+
+    return { existingUser, accessToken, refreshToken };
+  } catch (error) {
+    console.error(`Error in ${flowName}:`, error);
+    throw error; // Re-throw to be caught in the route handler
   }
-
-  // Generate tokens
-  const jwtPayload = { email: existingUser.email, role: existingUser.role };
-  const accessToken = generateAccessToken(jwtPayload);
-  const refreshToken = generateRefreshToken(jwtPayload);
-
-  return { existingUser, accessToken, refreshToken };
 };
+
 
 // Google OAuth callback route
 router.get('/google/callback', async (req, res, next) => {
   passport.authenticate('google', { session: false }, async (err, user, info) => {
+    const flowName = "GeneralOAuthFlow"; // Adding the flow name for tracing
+
     if (err || !user) {
+      console.error(`Error in ${flowName}:`, err || "User not authenticated");
       return res.redirect('/login'); // Redirect to login on error
     }
 
@@ -64,14 +74,14 @@ router.get('/google/callback', async (req, res, next) => {
       // Perform Google authentication
       const { accessToken, refreshToken } = await googleAuth(user);
 
-       const redirectUrl = `${config.callbackURL}?access_token=${accessToken}&refresh_token=${refreshToken}`;
-
       // Redirect to the frontend with the tokens
+      const redirectUrl = `${config.callbackURL}?access_token=${accessToken}&refresh_token=${refreshToken}`;
       res.redirect(redirectUrl);
     } catch (error) {
-      console.error('Error during authentication:', error);
+      console.error(`Error during ${flowName}:`, error);
       res.redirect('/login'); // Redirect to login on error
     }
   })(req, res, next);
 });
+
 export const AuthRoutes = router;

@@ -24,8 +24,8 @@ passport.use(
     {
       clientID: config.GOOGLE_CLIENT_ID as string,
       clientSecret: config.GOOGLE_CLIENT_SECRET as string,
-      callbackURL:config.callbackURL as string,
-       
+      callbackURL:
+        "https://bike-rental-service-backend-two.vercel.app/api/auth/google",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

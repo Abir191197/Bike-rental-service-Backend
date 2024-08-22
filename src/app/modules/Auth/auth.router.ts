@@ -64,8 +64,7 @@ router.get('/google/callback', async (req, res, next) => {
       const { accessToken, refreshToken } = await googleAuth(user);
 
       // Redirect with token
-      res.redirect(
-        `https://cox-s-sea-side-bike-frontend.vercel.app/login?access_token=${accessToken}&refresh_token=${refreshToken}`
+      res.redirect(`https://cox-s-sea-side-bike-frontend.vercel.app/login?access_token=${accessToken}&refresh_token=${refreshToken}`
       );
     } catch (error) {
       console.error('Error during authentication:', error);

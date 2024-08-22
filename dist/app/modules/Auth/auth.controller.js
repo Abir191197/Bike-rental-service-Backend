@@ -89,7 +89,6 @@ const refreshAccessToken = (0, catchAsync_1.default)((req, res) => __awaiter(voi
 // Google OAuth callback
 const google = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    console.log(user); // Consider replacing this with proper logging in production
     if (!user) {
         // Redirect to the login page or any other appropriate action
         return res.redirect("/");

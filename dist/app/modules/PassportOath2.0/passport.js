@@ -34,7 +34,7 @@ passport_1.default.deserializeUser((id, done) => __awaiter(void 0, void 0, void 
 passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: config_1.default.GOOGLE_CLIENT_ID,
     clientSecret: config_1.default.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/api/auth/google/callback",
+    callbackURL: config_1.default.callbackURL,
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {

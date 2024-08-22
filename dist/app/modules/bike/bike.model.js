@@ -32,6 +32,7 @@ const BikeSchema = new mongoose_1.Schema({
     year: { type: Number, required: true },
     model: { type: String, required: true },
     brand: { type: String, required: true },
+    imageLinks: { type: [String] },
     isAvailable: { type: Boolean, default: true },
 });
 const BikeModel = mongoose_1.default.model("Bike", BikeSchema);

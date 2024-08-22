@@ -93,7 +93,7 @@ const refreshAccessToken = catchAsync(async (req: Request, res: Response) => {
 // Google OAuth callback
 const google = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
-  console.log(user); // Consider replacing this with proper logging in production
+  
 
   if (!user) {
     // Redirect to the login page or any other appropriate action

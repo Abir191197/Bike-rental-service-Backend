@@ -9,6 +9,7 @@ const BikeSchema = new Schema<TBike>({
   year: { type: Number, required: true },
   model: { type: String, required: true },
   brand: { type: String, required: true },
+  imageLinks: { type: [String] },
   isAvailable: { type: Boolean, default: true },
 });
 

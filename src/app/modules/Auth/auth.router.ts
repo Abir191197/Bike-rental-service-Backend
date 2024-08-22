@@ -7,6 +7,7 @@ import passport from "../PassportOath2.0/passport";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import UserModel from "../user/user.model";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
+import config from "../../../config";
 const router = express.Router();
 
 router.post(
@@ -63,9 +64,10 @@ router.get('/google/callback', async (req, res, next) => {
       // Perform Google authentication
       const { accessToken, refreshToken } = await googleAuth(user);
 
-      // Redirect with token
-      res.redirect(`https://cox-s-sea-side-bike-frontend.vercel.app/login?access_token=${accessToken}&refresh_token=${refreshToken}`
-      );
+       const redirectUrl = `${config.callbackURL}?access_token=${accessToken}&refresh_token=${refreshToken}`;
+
+      // Redirect to the frontend with the tokens
+      res.redirect(redirectUrl);
     } catch (error) {
       console.error('Error during authentication:', error);
       res.redirect('/login'); // Redirect to login on error

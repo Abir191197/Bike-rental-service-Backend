@@ -14,7 +14,13 @@ router.post(
   bikeController.createBike,
 );
 
-router.get("/", auth(USER_ROLE.admin), bikeController.GetAllBike);
+router.get("/", auth(USER_ROLE.admin, USER_ROLE.user), bikeController.GetAllBike);
+
+router.get(
+  "/:id",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  bikeController.GetOneBike
+);
 
 router.put("/:id", auth(USER_ROLE.admin), bikeController.updatedBike);
 

@@ -30,6 +30,18 @@ const getAllBikeFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieved Bike");
     }
 });
+const getBikeById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield bike_model_1.default.findById(id);
+        if (!result) {
+            throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");
+        }
+        return result;
+    }
+    catch (error) {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieve Bike");
+    }
+});
 const updatedBikeIntoDB = (payload, updateData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (payload !== null) {
@@ -61,4 +73,5 @@ exports.bikeService = {
     getAllBikeFromDB,
     updatedBikeIntoDB,
     deleteBikeIntoDB,
+    getBikeById,
 };

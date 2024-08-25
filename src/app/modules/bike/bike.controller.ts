@@ -26,6 +26,27 @@ const GetAllBike = catchAsync(async (req, res) => {
   });
 });
 
+const GetOneBike = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await bikeService.getBikeById(id);
+
+  if (!result) {
+    return sendResponse(res, {
+      statusCode: httpStatus.NOT_FOUND,
+      success: false,
+      message: "Bike not found",
+    });
+  }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Bike retrieved successfully",
+    data: result,
+  });
+});
+
+
 const updatedBike = catchAsync(async (req, res) => {
   // Ensure req.user is properly typed
   if (!req.user) {
@@ -57,4 +78,5 @@ export const bikeController = {
   GetAllBike,
   updatedBike,
   deleteBike,
+  GetOneBike,
 };

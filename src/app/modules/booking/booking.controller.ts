@@ -48,8 +48,21 @@ const allBikeRentals = catchAsync(async (req, res) => {
   });
 });
 
+const allBikeRentalsForAdminOnly = catchAsync(async (req, res) => {
+  const result = await BookingService.showAllRentFromDBForAdmin();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Rentals retrieved successfully",
+    data: result,
+  });
+});
+
+
 export const BookingController = {
   createBooking,
   returnBike,
   allBikeRentals,
+  allBikeRentalsForAdminOnly,
 };

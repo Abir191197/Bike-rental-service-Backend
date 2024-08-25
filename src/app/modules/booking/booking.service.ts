@@ -119,8 +119,18 @@ const showAllRentFromDB = async (User: any) => {
   return isBookingExists;
 };
 
+const showAllRentFromDBForAdmin = async () => {
+  try {
+    const result = await BookingModel.find(); // Retrieves all bookings
+    return result;
+  } catch (error) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Failed to retrieve rentals");
+  }
+};
+
 export const BookingService = {
   createBookingIntoDB,
   returnBikeIntoDB,
   showAllRentFromDB,
+  showAllRentFromDBForAdmin,
 };

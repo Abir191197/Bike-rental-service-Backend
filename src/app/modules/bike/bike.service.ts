@@ -18,6 +18,19 @@ const getAllBikeFromDB = async () => {
   }
 };
 
+const getBikeById = async (id: any) => {
+  try {
+    const result = await BikeModel.findById(id);
+    if (!result) {
+      throw new AppError(httpStatus.NOT_FOUND, "Bike not found");
+    }
+    return result;
+  } catch (error) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Failed to retrieve Bike");
+  }
+};
+
+
 const updatedBikeIntoDB = async (
   payload: JwtPayload | null,
   updateData: Partial<TBike>,
@@ -56,4 +69,5 @@ export const bikeService = {
   getAllBikeFromDB,
   updatedBikeIntoDB,
   deleteBikeIntoDB,
+  getBikeById,
 };

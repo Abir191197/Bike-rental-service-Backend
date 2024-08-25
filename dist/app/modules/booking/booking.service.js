@@ -92,8 +92,18 @@ const showAllRentFromDB = (User) => __awaiter(void 0, void 0, void 0, function* 
     });
     return isBookingExists;
 });
+const showAllRentFromDBForAdmin = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield booking_model_1.default.find(); // Retrieves all bookings
+        return result;
+    }
+    catch (error) {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieve rentals");
+    }
+});
 exports.BookingService = {
     createBookingIntoDB,
     returnBikeIntoDB,
     showAllRentFromDB,
+    showAllRentFromDBForAdmin,
 };

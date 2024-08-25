@@ -36,6 +36,23 @@ const GetAllBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const GetOneBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const result = yield bike_service_1.bikeService.getBikeById(id);
+    if (!result) {
+        return (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.NOT_FOUND,
+            success: false,
+            message: "Bike not found",
+        });
+    }
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Bike retrieved successfully",
+        data: result,
+    });
+}));
 const updatedBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Ensure req.user is properly typed
     if (!req.user) {
@@ -62,4 +79,5 @@ exports.bikeController = {
     GetAllBike,
     updatedBike,
     deleteBike,
+    GetOneBike,
 };

@@ -16,7 +16,9 @@ const createBike = catchAsync(async (req, res) => {
 });
 
 const GetAllBike = catchAsync(async (req, res) => {
-  const result = await bikeService.getAllBikeFromDB();
+
+
+  const result = await bikeService.getAllBikeFromDB(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

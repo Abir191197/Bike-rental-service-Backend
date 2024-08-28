@@ -65,7 +65,7 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     const bikeId = yield bike_model_1.default.findById({
         _id: findBikeModelID,
     });
-    const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.pricePerHour;
+    const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
     const returnTime = new Date();
     const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);

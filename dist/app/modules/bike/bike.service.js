@@ -16,20 +16,33 @@ exports.bikeService = void 0;
 const bike_model_1 = __importDefault(require("./bike.model"));
 const appError_1 = __importDefault(require("../../errors/appError"));
 const http_status_1 = __importDefault(require("http-status"));
+const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
 const createBikeIntoDB = (bikeData) => __awaiter(void 0, void 0, void 0, function* () {
     const bike = new bike_model_1.default(bikeData);
     yield bike.save();
     return bike.toObject();
 });
-const getAllBikeFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+const BikeSearchableFields = ["fullbike_name"]; // Adjust fields as necessary
+const getAllBikeFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield bike_model_1.default.find();
+        const queryObj = Object.assign({}, query);
+        // Ensure the query excludes deleted bikes
+        queryObj.isDelete = false;
+        const bikeQuery = new QueryBuilder_1.default(bike_model_1.default.find(), queryObj)
+            .search(BikeSearchableFields)
+            .filter() // Implement filtering based on your needs
+            .paginate() // Implement pagination based on your needs
+            .sort() // Implement sorting based on your needs
+            .fields(); // Implement field selection if needed
+        const result = yield bikeQuery.modelQuery;
         return result;
     }
     catch (error) {
-        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieved Bike");
+        // Handle errors
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieve bikes");
     }
 });
+//get one bike
 const getBikeById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield bike_model_1.default.findById(id);
@@ -61,10 +74,20 @@ const updatedBikeIntoDB = (payload, updateData) => __awaiter(void 0, void 0, voi
 });
 const deleteBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = yield bike_model_1.default.findByIdAndDelete(payload === null || payload === void 0 ? void 0 : payload.id);
+        // Ensure payload and payload.id are valid
+        if (!(payload === null || payload === void 0 ? void 0 : payload.id)) {
+            throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Bike ID is required");
+        }
+        // Perform the soft delete by setting isDeleted to true
+        const result = yield bike_model_1.default.findByIdAndUpdate(payload.id, { isDeleted: true }, { new: true } // Return the updated document
+        );
+        if (!result) {
+            throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");
+        }
         return result;
     }
     catch (error) {
+        // Handle and throw an appropriate error
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to delete Bike");
     }
 });

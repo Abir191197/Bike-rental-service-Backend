@@ -71,7 +71,7 @@ const returnBikeIntoDB = async (id: string) => {
     _id: findBikeModelID,
   });
 
-  const timePer: any = bikeId?.pricePerHour;
+  const timePer: any = bikeId?.PerHour;
 
   const StartTime: any = isBookingExists?.startTime;
   const returnTime: any = new Date();

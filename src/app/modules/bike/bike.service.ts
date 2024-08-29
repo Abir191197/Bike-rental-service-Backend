@@ -54,28 +54,39 @@ const getBikeById = async (id: any) => {
 
 const updatedBikeIntoDB = async (
   payload: JwtPayload | null,
-  updateData: Partial<TBike>,
+  updateData: Partial<TBike>
 ) => {
   try {
-    if (payload !== null) {
-      const updatedBike = await BikeModel.findOneAndUpdate(
-        { id: payload.id },
-        { $set: updateData },
-        { new: true, runValidators: true },
-      );
-      if (!updatedBike) {
-        throw new AppError(httpStatus.NOT_FOUND, "User not found");
-      }
-
-      return updatedBike;
-    } else {
-      throw new AppError(httpStatus.BAD_REQUEST, "Invalid payload");
+    if (!payload || !payload.id) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Invalid or missing payload");
     }
+
+    const updatedBike = await BikeModel.findOneAndUpdate(
+      { _id: payload.id },
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedBike) {
+      throw new AppError(httpStatus.NOT_FOUND, "Bike not found");
+    }
+
+    return updatedBike;
   } catch (error) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Failed to update bike");
+    if (error instanceof AppError) {
+      throw error; // Re-throw known AppError
+    }
+
+    // Log the error for debugging
+    console.error("Error updating bike:", error);
+
+    // Provide a more descriptive error message
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Failed to update bike. Please ensure all fields are valid."
+    );
   }
 };
-
 
 const deleteBikeIntoDB = async (payload: JwtPayload | null) => {
   try {

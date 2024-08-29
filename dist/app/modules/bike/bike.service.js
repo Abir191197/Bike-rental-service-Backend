@@ -57,19 +57,23 @@ const getBikeById = (id) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const updatedBikeIntoDB = (payload, updateData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (payload !== null) {
-            const updatedBike = yield bike_model_1.default.findOneAndUpdate({ id: payload.id }, { $set: updateData }, { new: true, runValidators: true });
-            if (!updatedBike) {
-                throw new appError_1.default(http_status_1.default.NOT_FOUND, "User not found");
-            }
-            return updatedBike;
+        if (!payload || !payload.id) {
+            throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid or missing payload");
         }
-        else {
-            throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid payload");
+        const updatedBike = yield bike_model_1.default.findOneAndUpdate({ _id: payload.id }, { $set: updateData }, { new: true, runValidators: true });
+        if (!updatedBike) {
+            throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");
         }
+        return updatedBike;
     }
     catch (error) {
-        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update bike");
+        if (error instanceof appError_1.default) {
+            throw error; // Re-throw known AppError
+        }
+        // Log the error for debugging
+        console.error("Error updating bike:", error);
+        // Provide a more descriptive error message
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update bike. Please ensure all fields are valid.");
     }
 });
 const deleteBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {

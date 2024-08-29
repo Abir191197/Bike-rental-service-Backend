@@ -54,7 +54,7 @@ const GetOneBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     });
 }));
 const updatedBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Ensure req.user is properly typed
+    // Ensure req.user is properly typed and authenticated
     if (!req.user) {
         throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "User not authenticated");
     }

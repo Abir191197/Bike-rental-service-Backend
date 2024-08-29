@@ -50,7 +50,7 @@ const GetOneBike = catchAsync(async (req, res) => {
 
 
 const updatedBike = catchAsync(async (req, res) => {
-  // Ensure req.user is properly typed
+  // Ensure req.user is properly typed and authenticated
   if (!req.user) {
     throw new AppError(httpStatus.UNAUTHORIZED, "User not authenticated");
   }
@@ -64,6 +64,7 @@ const updatedBike = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 
 const deleteBike = catchAsync(async (req, res) => {
   const result = await bikeService.deleteBikeIntoDB(req.params);

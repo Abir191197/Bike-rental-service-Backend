@@ -62,7 +62,7 @@ const updatedBikeIntoDB = async (
     }
 
     const updatedBike = await BikeModel.findOneAndUpdate(
-      { _id: payload.id },
+      { id: payload.id },
       { $set: updateData },
       { new: true, runValidators: true }
     );

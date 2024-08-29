@@ -60,7 +60,7 @@ const updatedBikeIntoDB = (payload, updateData) => __awaiter(void 0, void 0, voi
         if (!payload || !payload.id) {
             throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid or missing payload");
         }
-        const updatedBike = yield bike_model_1.default.findOneAndUpdate({ _id: payload.id }, { $set: updateData }, { new: true, runValidators: true });
+        const updatedBike = yield bike_model_1.default.findOneAndUpdate({ id: payload.id }, { $set: updateData }, { new: true, runValidators: true });
         if (!updatedBike) {
             throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");
         }

@@ -19,7 +19,9 @@ const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const bike_service_1 = require("./bike.service");
 const appError_1 = __importDefault(require("../../errors/appError"));
 const createBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield bike_service_1.bikeService.createBikeIntoDB(req.body);
+    // Directly use req.body, which should be the bike data
+    const bikeData = req.body;
+    const result = yield bike_service_1.bikeService.createBikeIntoDB(bikeData);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

@@ -5,7 +5,10 @@ import { bikeService } from "./bike.service";
 import AppError from "../../errors/appError";
 
 const createBike = catchAsync(async (req, res) => {
-  const result = await bikeService.createBikeIntoDB(req.body);
+  // Directly use req.body, which should be the bike data
+  const bikeData = req.body;
+
+  const result = await bikeService.createBikeIntoDB(bikeData);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -14,6 +17,7 @@ const createBike = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 
 const GetAllBike = catchAsync(async (req, res) => {
 

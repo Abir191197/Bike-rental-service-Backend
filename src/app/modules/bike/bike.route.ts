@@ -7,8 +7,7 @@ import { bikeController } from "./bike.controller";
 
 const router = express.Router();
 
-router.post(
-  "/",
+router.post("/",
   auth(USER_ROLE.admin),
   validateRequest(BikeValidation.bikeValidationSchema),
   bikeController.createBike,

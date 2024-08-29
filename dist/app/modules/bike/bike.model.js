@@ -31,8 +31,8 @@ const BikeSchema = new mongoose_1.Schema({
     isDelete: { type: Boolean, default: false }, // Renamed from 'isDeleted'
     imgSrc: { type: [String], default: [] }, // Renamed from 'imageLinks'
     make: { type: String },
-    model: { type: String, required: true },
-    year: { type: String, required: true }, // Changed to String
+    model: { type: String },
+    year: { type: String }, // Changed to String
     type: { type: String },
     engine: {
         type: {

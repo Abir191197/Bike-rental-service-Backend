@@ -82,9 +82,11 @@ const updatedBike = catchAsync(async (req, res) => {
   });
 });
 
-const deleteBike = catchAsync(async (req, res) => {
-  const result = await bikeService.deleteBikeIntoDB(req.params);
 
+const deleteBike = catchAsync(async (req, res) => {
+  const { id } = req.params; // Get ID from request parameters
+  
+  const result = await bikeService.deleteBikeIntoDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

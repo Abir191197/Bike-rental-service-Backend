@@ -79,7 +79,8 @@ const updatedBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     });
 }));
 const deleteBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield bike_service_1.bikeService.deleteBikeIntoDB(req.params);
+    const { id } = req.params; // Get ID from request parameters
+    const result = yield bike_service_1.bikeService.deleteBikeIntoDB(id);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

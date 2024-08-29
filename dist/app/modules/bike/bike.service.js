@@ -79,14 +79,10 @@ const updatedBikeIntoDB = (id, updateData) => __awaiter(void 0, void 0, void 0, 
         throw new appError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, "Failed to update bike. Please ensure all fields are valid.");
     }
 });
-const deleteBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Ensure payload and payload.id are valid
-        if (!(payload === null || payload === void 0 ? void 0 : payload.id)) {
-            throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Bike ID is required");
-        }
-        // Perform the soft delete by setting isDeleted to true
-        const result = yield bike_model_1.default.findByIdAndUpdate(payload.id, { isDeleted: true }, { new: true } // Return the updated document
+        // Ensure the ID is valid and perform the soft delete
+        const result = yield bike_model_1.default.findByIdAndUpdate(id, { isDelete: true }, { new: true } // Return the updated document
         );
         if (!result) {
             throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");

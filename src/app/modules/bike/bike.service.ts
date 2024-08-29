@@ -89,17 +89,12 @@ const updatedBikeIntoDB = async (id: string, updateData: Partial<TBike>) => {
 };
 
 
-const deleteBikeIntoDB = async (payload: JwtPayload | null) => {
+const deleteBikeIntoDB = async (id: string): Promise<any> => {
   try {
-    // Ensure payload and payload.id are valid
-    if (!payload?.id) {
-      throw new AppError(httpStatus.BAD_REQUEST, "Bike ID is required");
-    }
-
-    // Perform the soft delete by setting isDeleted to true
+    // Ensure the ID is valid and perform the soft delete
     const result = await BikeModel.findByIdAndUpdate(
-      payload.id,
-      { isDeleted: true },
+      id,
+      { isDelete: true },
       { new: true } // Return the updated document
     );
 

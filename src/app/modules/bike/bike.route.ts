@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/",
   auth(USER_ROLE.admin),
-  validateRequest(BikeValidation.bikeValidationSchema),
+  //validateRequest(BikeValidation.bikeValidationSchema),
   bikeController.createBike,
 );
 

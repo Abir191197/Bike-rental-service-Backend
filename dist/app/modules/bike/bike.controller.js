@@ -58,7 +58,17 @@ const updatedBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
     if (!req.user) {
         throw new appError_1.default(http_status_1.default.UNAUTHORIZED, "User not authenticated");
     }
-    const result = yield bike_service_1.bikeService.updatedBikeIntoDB(req.user, req.body);
+    // Extract the bike ID from the request parameters
+    const id = req.params.id;
+    // Extract the PerHour value from the request body
+    const { PerHour } = req.body;
+    // Validate the input
+    if (typeof PerHour !== "number" || PerHour <= 0) {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid price per hour");
+    }
+    // Call the service function to update the bike in the database
+    const result = yield bike_service_1.bikeService.updatedBikeIntoDB(id, { PerHour });
+    // Send the response
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

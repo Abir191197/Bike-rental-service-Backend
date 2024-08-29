@@ -55,12 +55,15 @@ const getBikeById = (id) => __awaiter(void 0, void 0, void 0, function* () {
         throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieve Bike");
     }
 });
-const updatedBikeIntoDB = (payload, updateData) => __awaiter(void 0, void 0, void 0, function* () {
+const updatedBikeIntoDB = (id, updateData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!payload || !payload.id) {
-            throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid or missing payload");
+        // Validate the presence of id in the updateData
+        if (!id) {
+            throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Bike ID is required");
         }
-        const updatedBike = yield bike_model_1.default.findOneAndUpdate({ id: payload.id }, { $set: updateData }, { new: true, runValidators: true });
+        // Perform the update operation
+        const updatedBike = yield bike_model_1.default.findOneAndUpdate({ _id: id }, { $set: updateData }, { new: true, runValidators: true });
+        // Handle the case where the bike was not found
         if (!updatedBike) {
             throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");
         }
@@ -73,7 +76,7 @@ const updatedBikeIntoDB = (payload, updateData) => __awaiter(void 0, void 0, voi
         // Log the error for debugging
         console.error("Error updating bike:", error);
         // Provide a more descriptive error message
-        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to update bike. Please ensure all fields are valid.");
+        throw new appError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, "Failed to update bike. Please ensure all fields are valid.");
     }
 });
 const deleteBikeIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {

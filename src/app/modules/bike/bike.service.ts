@@ -52,21 +52,21 @@ const getBikeById = async (id: any) => {
 };
 
 
-const updatedBikeIntoDB = async (
-  payload: JwtPayload | null,
-  updateData: Partial<TBike>
-) => {
+const updatedBikeIntoDB = async (id: string, updateData: Partial<TBike>) => {
   try {
-    if (!payload || !payload.id) {
-      throw new AppError(httpStatus.BAD_REQUEST, "Invalid or missing payload");
+    // Validate the presence of id in the updateData
+    if (!id) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Bike ID is required");
     }
 
+    // Perform the update operation
     const updatedBike = await BikeModel.findOneAndUpdate(
-      { id: payload.id },
+      { _id: id },
       { $set: updateData },
       { new: true, runValidators: true }
     );
 
+    // Handle the case where the bike was not found
     if (!updatedBike) {
       throw new AppError(httpStatus.NOT_FOUND, "Bike not found");
     }
@@ -82,11 +82,12 @@ const updatedBikeIntoDB = async (
 
     // Provide a more descriptive error message
     throw new AppError(
-      httpStatus.BAD_REQUEST,
+      httpStatus.INTERNAL_SERVER_ERROR,
       "Failed to update bike. Please ensure all fields are valid."
     );
   }
 };
+
 
 const deleteBikeIntoDB = async (payload: JwtPayload | null) => {
   try {

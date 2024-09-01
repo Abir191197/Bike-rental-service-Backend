@@ -126,7 +126,8 @@ const returnBikeIntoDB = async (id: string) => {
     timeZone: "Asia/Dhaka",
   });
 
-  const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
+  const totalTime: number =
+    (returnTime.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
 
   const totalCost: number = Math.round(totalTime * timePer);
 

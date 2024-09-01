@@ -110,7 +110,7 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     const returnTime = new Date().toLocaleString("en-US", {
         timeZone: "Asia/Dhaka",
     });
-    const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
+    const totalTime = (returnTime.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {

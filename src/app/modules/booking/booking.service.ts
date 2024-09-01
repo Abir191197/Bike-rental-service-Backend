@@ -1,13 +1,11 @@
 import httpStatus from "http-status";
+import mongoose from "mongoose";
 import AppError from "../../errors/appError";
 import BikeModel from "../bike/bike.model";
-import UserModel from "../user/user.model";
-import { TBooking } from "./booking.interface";
-import BookingModel from "./booking.model";
 import { sendPaymentRequest } from "../Payment/payment.utils";
-import mongoose from "mongoose";
 import { sendPaymentRequestFull } from "../Payment/TotalPaymentUtils";
-import { DateTime } from "luxon";
+import UserModel from "../user/user.model";
+import BookingModel from "./booking.model";
 
 const createBookingIntoDB = async (payload: {
   authUserInformation: any;
@@ -26,7 +24,7 @@ const createBookingIntoDB = async (payload: {
     if (!isUserExist) {
       throw new AppError(httpStatus.NOT_FOUND, "User not found");
     }
-  
+
     // Check if the bike exists and is available
     const isBikeExist = await BikeModel.findById({
       _id: rentalInformation.bikeId,
@@ -83,7 +81,6 @@ const createBookingIntoDB = async (payload: {
     let paymentSession;
     try {
       paymentSession = await sendPaymentRequest(paymentData);
-     
     } catch (error) {
       console.error("Failed to create payment session:", error);
       await session.abortTransaction(); // Rollback transaction
@@ -124,16 +121,11 @@ const returnBikeIntoDB = async (id: string) => {
 
   const StartTime: any = isBookingExists?.startTime;
 
+  // Convert it to a JavaScript Date object
+  const returnTime: any = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Dhaka",
+  });
 
-
-
-const returnTimeLuxon = DateTime.now().setZone("Asia/Dhaka");
-
-// Convert it to a JavaScript Date object
-const returnTime:any = new Date(returnTimeLuxon.toString());
-
-
- 
   const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
 
   const totalCost: number = Math.round(totalTime * timePer);
@@ -146,7 +138,7 @@ const returnTime:any = new Date(returnTimeLuxon.toString());
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 
   //updated booking model
@@ -158,7 +150,7 @@ const returnTime:any = new Date(returnTimeLuxon.toString());
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 };
 
@@ -172,7 +164,6 @@ const showAllRentFromDB = async (User: any) => {
     }
 
     const userId = isUserExist._id;
-    
 
     // Find bookings for the user and populate bike details
     const bookings = await BookingModel.find({ userId }).populate({
@@ -185,21 +176,14 @@ const showAllRentFromDB = async (User: any) => {
       (booking: any) => booking.advancePayment !== "Failed"
     );
 
-
-
-   
     return {
       bookings: filteredBookings,
-     
     };
   } catch (error) {
     console.error("Error fetching rentals:", error);
     throw error;
   }
 };
-
-
-
 
 const showAllRentFromDBForAdmin = async () => {
   try {
@@ -282,10 +266,6 @@ const FullPaymentGetWay = async (
     throw new Error("Failed to process full payment");
   }
 };
-
-
-
-
 
 export const BookingService = {
   createBookingIntoDB,

@@ -14,14 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const appError_1 = __importDefault(require("../../errors/appError"));
 const bike_model_1 = __importDefault(require("../bike/bike.model"));
+const payment_utils_1 = require("../Payment/payment.utils");
+const TotalPaymentUtils_1 = require("../Payment/TotalPaymentUtils");
 const user_model_1 = __importDefault(require("../user/user.model"));
 const booking_model_1 = __importDefault(require("./booking.model"));
-const payment_utils_1 = require("../Payment/payment.utils");
-const mongoose_1 = __importDefault(require("mongoose"));
-const TotalPaymentUtils_1 = require("../Payment/TotalPaymentUtils");
-const luxon_1 = require("luxon");
 const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
@@ -107,9 +106,10 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
-    const returnTimeLuxon = luxon_1.DateTime.now().setZone("Asia/Dhaka");
     // Convert it to a JavaScript Date object
-    const returnTime = new Date(returnTimeLuxon.toString());
+    const returnTime = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Dhaka",
+    });
     const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available

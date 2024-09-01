@@ -122,11 +122,16 @@ const returnBikeIntoDB = async (id: string) => {
 
   const timePer: any = bikeId?.PerHour;
 
-  const StartTime: any = isBookingExists?.startTime;
+  const startTimeString: any = isBookingExists?.startTime;
+
+ const StartTime = DateTime.fromISO(startTimeString, { zone: "utc" });
+
+ // Get the current time in UTC
  const returnTime = DateTime.utc();
 
  // Calculate the total time difference in hours
  const totalTime = returnTime.diff(StartTime, "hours").as("hours");
+
   
   const totalCost: number = Math.round(totalTime * timePer);
 

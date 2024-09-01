@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
-const luxon_1 = require("luxon");
 const mongoose_1 = __importDefault(require("mongoose"));
 const appError_1 = __importDefault(require("../../errors/appError"));
 const bike_model_1 = __importDefault(require("../bike/bike.model"));
@@ -94,36 +93,42 @@ const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 //return bike for admin route
-const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const isBookingExists = yield booking_model_1.default.findOne({
-        _id: id,
-    });
+// Helper function to convert a date string to a Date object
+const returnBikeIntoDB = (id, returnTime) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!mongoose_1.default.isValidObjectId(id)) {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid booking ID");
+    }
+    const isBookingExists = yield booking_model_1.default.findById(id);
     if (!isBookingExists) {
         throw new appError_1.default(http_status_1.default.NOT_FOUND, "Booking not available");
     }
     const findBikeModelID = isBookingExists.bikeId;
-    const bikeId = yield bike_model_1.default.findById({
-        _id: findBikeModelID,
-    });
-    const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
-    const StartTimeISO = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime; // Should be an ISO string
-    // Convert StartTime from ISO string to a DateTime object in UTC
-    const StartTime = luxon_1.DateTime.fromISO(StartTimeISO, { zone: "utc" });
-    // Get the current time in Asia/Dhaka timezone
-    const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
-    // Calculate the difference in hours between returnTime and StartTime
-    const totalTime = returnTime.diff(StartTime, "hours").hours;
-    // Assuming `timePer` is defined and is the cost per hour
+    const bike = yield bike_model_1.default.findById(findBikeModelID);
+    if (!bike) {
+        throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not found");
+    }
+    const timePer = bike.PerHour;
+    // Ensure both times are Date objects
+    const startTime = new Date(isBookingExists.startTime);
+    const returnDateTime = new Date(returnTime);
+    if (isNaN(startTime.getTime()) || isNaN(returnDateTime.getTime())) {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Invalid date format");
+    }
+    // Calculate total time in hours
+    const totalTime = (returnDateTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+    if (totalTime < 0) {
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Return time cannot be before start time");
+    }
+    // Calculate total cost
     const totalCost = Math.round(totalTime * timePer);
-    yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {
-        new: true,
-        runValidators: true,
-    });
-    //updated booking model
-    yield booking_model_1.default.findByIdAndUpdate(isBookingExists, { returnTime: new Date(), totalCost: totalCost, isReturned: true }, {
-        new: true,
-        runValidators: true,
-    });
+    // Ensure totalCost is a valid number
+    if (isNaN(totalCost)) {
+        throw new appError_1.default(http_status_1.default.INTERNAL_SERVER_ERROR, "Failed to calculate total cost");
+    }
+    // Update the bike availability
+    yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, { new: true, runValidators: true });
+    // Update the booking record
+    yield booking_model_1.default.findByIdAndUpdate(id, { returnTime: returnDateTime, totalCost: totalCost, isReturned: true }, { new: true, runValidators: true });
 });
 const showAllRentFromDB = (User) => __awaiter(void 0, void 0, void 0, function* () {
     try {

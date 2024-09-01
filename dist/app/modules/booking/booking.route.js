@@ -10,7 +10,7 @@ const auth_1 = __importDefault(require("../../middlewares/auth"));
 const booking_controller_1 = require("./booking.controller");
 const router = express_1.default.Router();
 router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), booking_controller_1.BookingController.createBooking);
-router.put("/:id/return", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingController.returnBike);
+router.put("/return/:id", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingController.returnBike);
 router.get("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), booking_controller_1.BookingController.allBikeRentals);
 router.get("/AllRentals", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.BookingController.allBikeRentalsForAdminOnly);
 router.post("/TotalPayment/:TotalPayTran_id", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), booking_controller_1.BookingController.FullPayment);

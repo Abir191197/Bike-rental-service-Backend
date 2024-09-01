@@ -1,5 +1,4 @@
 import httpStatus from "http-status";
-import { DateTime } from "luxon";
 import mongoose from "mongoose";
 import AppError from "../../errors/appError";
 import BikeModel from "../bike/bike.model";
@@ -103,56 +102,75 @@ const createBookingIntoDB = async (payload: {
 
 //return bike for admin route
 
-const returnBikeIntoDB = async (id: string) => {
-  const isBookingExists = await BookingModel.findOne({
-    _id: id,
-  });
+// Helper function to convert a date string to a Date object
+
+
+
+const returnBikeIntoDB = async (id: string, returnTime: any) => {
+  if (!mongoose.isValidObjectId(id)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid booking ID");
+  }
+
+  const isBookingExists = await BookingModel.findById(id);
 
   if (!isBookingExists) {
     throw new AppError(httpStatus.NOT_FOUND, "Booking not available");
   }
 
   const findBikeModelID = isBookingExists.bikeId;
+  const bike = await BikeModel.findById(findBikeModelID);
 
-  const bikeId = await BikeModel.findById({
-    _id: findBikeModelID,
-  });
+  if (!bike) {
+    throw new AppError(httpStatus.NOT_FOUND, "Bike not found");
+  }
 
-  const timePer: any = bikeId?.PerHour;
-const StartTimeISO :any= isBookingExists?.startTime; // Should be an ISO string
+  const timePer: number = bike.PerHour;
 
-// Convert StartTime from ISO string to a DateTime object in UTC
-const StartTime = DateTime.fromISO(StartTimeISO, { zone: "utc" });
+  // Ensure both times are Date objects
+  const startTime: Date = new Date(isBookingExists.startTime);
+  const returnDateTime: Date = new Date(returnTime);
 
-// Get the current time in Asia/Dhaka timezone
-const returnTime = DateTime.now().setZone("Asia/Dhaka");
+  if (isNaN(startTime.getTime()) || isNaN(returnDateTime.getTime())) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid date format");
+  }
 
-// Calculate the difference in hours between returnTime and StartTime
-const totalTime = returnTime.diff(StartTime, "hours").hours;
+  // Calculate total time in hours
+  const totalTime: number =
+    (returnDateTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
 
-// Assuming `timePer` is defined and is the cost per hour
-const totalCost = Math.round(totalTime * timePer);
+  if (totalTime < 0) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Return time cannot be before start time"
+    );
+  }
+
+  // Calculate total cost
+  const totalCost: number = Math.round(totalTime * timePer);
+
+  // Ensure totalCost is a valid number
+  if (isNaN(totalCost)) {
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Failed to calculate total cost"
+    );
+  }
+
+  // Update the bike availability
   await BikeModel.findByIdAndUpdate(
     findBikeModelID,
     { isAvailable: true },
-    {
-      new: true,
-      runValidators: true,
-    }
+    { new: true, runValidators: true }
   );
 
-  //updated booking model
-
+  // Update the booking record
   await BookingModel.findByIdAndUpdate(
-    isBookingExists,
-    { returnTime: new Date(), totalCost: totalCost, isReturned: true },
-
-    {
-      new: true,
-      runValidators: true,
-    }
+    id,
+    { returnTime: returnDateTime, totalCost: totalCost, isReturned: true },
+    { new: true, runValidators: true }
   );
 };
+
 
 const showAllRentFromDB = async (User: any) => {
   try {

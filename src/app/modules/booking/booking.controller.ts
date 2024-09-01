@@ -15,6 +15,7 @@ const createBooking = catchAsync(async (req, res) => {
     rentalInformation: req.body,
     authUserInformation: req.user,
   };
+  console.log(payload);
 
   const result = await BookingService.createBookingIntoDB(payload);
 
@@ -29,14 +30,24 @@ const createBooking = catchAsync(async (req, res) => {
 //return Bike for admin route
 
 const returnBike = catchAsync(async (req, res) => {
+  // Extract ID from URL parameters and ReturnTime from the request body
   const { id } = req.params;
+  const { returnTime } = req.body; // Ensure consistency in naming
 
-  const result = await BookingService.returnBikeIntoDB(id);
+  // Log for debugging
+  console.log(`ID: ${id}`);
+  console.log(`Return Time: ${returnTime}`);
 
+ 
+
+  // Call the service to handle the bike return
+  const result = await BookingService.returnBikeIntoDB(id, returnTime);
+
+  // Send a successful response
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Bike return successfully",
+    message: "Bike returned successfully",
     data: result,
   });
 });

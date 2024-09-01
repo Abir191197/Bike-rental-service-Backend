@@ -22,6 +22,7 @@ const createBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         rentalInformation: req.body,
         authUserInformation: req.user,
     };
+    console.log(payload);
     const result = yield booking_service_1.BookingService.createBookingIntoDB(payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -32,12 +33,19 @@ const createBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 }));
 //return Bike for admin route
 const returnBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Extract ID from URL parameters and ReturnTime from the request body
     const { id } = req.params;
-    const result = yield booking_service_1.BookingService.returnBikeIntoDB(id);
+    const { returnTime } = req.body; // Ensure consistency in naming
+    // Log for debugging
+    console.log(`ID: ${id}`);
+    console.log(`Return Time: ${returnTime}`);
+    // Call the service to handle the bike return
+    const result = yield booking_service_1.BookingService.returnBikeIntoDB(id, returnTime);
+    // Send a successful response
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: "Bike return successfully",
+        message: "Bike returned successfully",
         data: result,
     });
 }));

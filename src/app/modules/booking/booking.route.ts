@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/", auth(USER_ROLE.admin,USER_ROLE.user), BookingController.createBooking);
 
-router.put("/:id/return", auth(USER_ROLE.admin), BookingController.returnBike);
+router.put("/return/:id", auth(USER_ROLE.admin), BookingController.returnBike);
 
 router.get(
   "/",

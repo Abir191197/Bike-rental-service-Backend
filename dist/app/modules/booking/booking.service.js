@@ -106,12 +106,9 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         _id: findBikeModelID,
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
-    const startTimeString = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
-    const StartTime = luxon_1.DateTime.fromISO(startTimeString, { zone: "utc" });
-    // Get the current time in UTC
-    const returnTime = luxon_1.DateTime.utc();
-    // Calculate the total time difference in hours
-    const totalTime = returnTime.diff(StartTime, "hours").as("hours");
+    const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
+    const returnTime = luxon_1.DateTime.now();
+    const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {

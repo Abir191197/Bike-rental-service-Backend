@@ -122,17 +122,12 @@ const returnBikeIntoDB = async (id: string) => {
 
   const timePer: any = bikeId?.PerHour;
 
-  const startTimeString: any = isBookingExists?.startTime;
+  const StartTime: any = isBookingExists?.startTime;
 
- const StartTime = DateTime.fromISO(startTimeString, { zone: "utc" });
-
- // Get the current time in UTC
- const returnTime = DateTime.utc();
-
- // Calculate the total time difference in hours
- const totalTime = returnTime.diff(StartTime, "hours").as("hours");
-
+  const returnTime: any = DateTime.now();
   
+  const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
+
   const totalCost: number = Math.round(totalTime * timePer);
 
   // updated bike available
@@ -143,7 +138,7 @@ const returnBikeIntoDB = async (id: string) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   //updated booking model
@@ -155,7 +150,7 @@ const returnBikeIntoDB = async (id: string) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 };
 

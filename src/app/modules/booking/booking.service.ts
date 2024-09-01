@@ -122,8 +122,8 @@ const returnBikeIntoDB = async (id: string) => {
   const timePer: any = bikeId?.PerHour;
 
   const StartTime: any = isBookingExists?.startTime;
-  const returnTime = new Date(); 
-  const returnTimeUTC = new Date(returnTime.toISOString()); //UTC make
+  const returnTime = new Date();
+  const returnTimeUTC = returnTime.toISOString();
   const totalTime =
     (returnTimeUTC.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
 

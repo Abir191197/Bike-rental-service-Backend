@@ -5,7 +5,7 @@ import UserModel from "../user/user.model";
 import { TBooking } from "./booking.interface";
 import BookingModel from "./booking.model";
 import { sendPaymentRequest } from "../Payment/payment.utils";
-import mongoose from "mongoose";
+import mongoose, { Date } from "mongoose";
 import { sendPaymentRequestFull } from "../Payment/TotalPaymentUtils";
 import { DateTime } from "luxon";
 
@@ -122,14 +122,17 @@ const returnBikeIntoDB = async (id: string) => {
 
   const timePer: any = bikeId?.PerHour;
 
-  const StartTime: any = isBookingExists?.startTime;
-  console.log(StartTime);
-  
- const returnTime: any = DateTime.now().setZone("Asia/Dhaka");
-console.log(returnTime);
+  const StartTime = DateTime.fromJSDate(isBookingExists?.startTime).setZone(
+    "Asia/Dhaka"
+  );
 
-  const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
+  // Get the current time in Asia/Dhaka timezone
+  const returnTime = DateTime.now().setZone("Asia/Dhaka");
 
+  // Calculate the difference in hours between returnTime and StartTime
+  const totalTime: number = returnTime.diff(StartTime, "hours").hours;
+
+  // Calculate total cost
   const totalCost: number = Math.round(totalTime * timePer);
 
   // updated bike available
@@ -140,7 +143,7 @@ console.log(returnTime);
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 
   //updated booking model
@@ -152,7 +155,7 @@ console.log(returnTime);
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 };
 

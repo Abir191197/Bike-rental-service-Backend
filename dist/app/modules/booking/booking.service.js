@@ -106,11 +106,12 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         _id: findBikeModelID,
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
-    const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
-    console.log(StartTime);
+    const StartTime = luxon_1.DateTime.fromJSDate(isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime).setZone("Asia/Dhaka");
+    // Get the current time in Asia/Dhaka timezone
     const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
-    console.log(returnTime);
-    const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
+    // Calculate the difference in hours between returnTime and StartTime
+    const totalTime = returnTime.diff(StartTime, "hours").hours;
+    // Calculate total cost
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {

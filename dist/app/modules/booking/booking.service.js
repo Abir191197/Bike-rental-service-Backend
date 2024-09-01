@@ -107,7 +107,8 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
     const returnTime = new Date();
-    const totalTime = (returnTime.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
+    const returnTimeUTC = new Date(returnTime.toISOString()); //UTC make
+    const totalTime = (returnTimeUTC.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {

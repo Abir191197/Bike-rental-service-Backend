@@ -119,20 +119,19 @@ const returnBikeIntoDB = async (id: string) => {
   });
 
   const timePer: any = bikeId?.PerHour;
+const StartTimeISO :any= isBookingExists?.startTime; // Should be an ISO string
 
-  const StartTime: any = isBookingExists?.startTime;
+// Convert StartTime from ISO string to a DateTime object in UTC
+const StartTime = DateTime.fromISO(StartTimeISO, { zone: "utc" });
 
-  const returnTime = DateTime.now().setZone("Asia/Dhaka");
+// Get the current time in Asia/Dhaka timezone
+const returnTime = DateTime.now().setZone("Asia/Dhaka");
 
-  // Calculate the difference in hours between returnTime and StartTime
-  const totalTime = returnTime.diff(
-    DateTime.fromJSDate(StartTime),
-    "hours"
-  ).hours;
+// Calculate the difference in hours between returnTime and StartTime
+const totalTime = returnTime.diff(StartTime, "hours").hours;
 
-  // Calculate total cost
-  const totalCost = Math.round(totalTime * timePer);
-
+// Assuming `timePer` is defined and is the cost per hour
+const totalCost = Math.round(totalTime * timePer);
   await BikeModel.findByIdAndUpdate(
     findBikeModelID,
     { isAvailable: true },

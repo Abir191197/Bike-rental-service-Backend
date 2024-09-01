@@ -124,8 +124,8 @@ const returnBikeIntoDB = async (id: string) => {
 
   const StartTime: any = isBookingExists?.startTime;
 
-  const returnTime: any = DateTime.now();
-  
+ const returnTime: any = DateTime.now().setZone("Asia/Dhaka");
+
   const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
 
   const totalCost: number = Math.round(totalTime * timePer);

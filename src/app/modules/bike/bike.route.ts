@@ -15,6 +15,11 @@ router.post("/",
 
 router.get("/", auth(USER_ROLE.admin, USER_ROLE.user), bikeController.GetAllBike);
 
+router.get("/FeatureBike", bikeController.GetFeatureBike);
+
+
+
+
 router.get(
   "/:id",
   auth(USER_ROLE.admin, USER_ROLE.user),

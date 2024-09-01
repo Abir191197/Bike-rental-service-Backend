@@ -1,16 +1,14 @@
-import BikeModel from "./bike.model";
-import TBike from "./bike.interface";
-import AppError from "../../errors/appError";
 import httpStatus from "http-status";
-import { JwtPayload } from "jsonwebtoken";
 import QueryBuilder from "../../builder/QueryBuilder";
+import AppError from "../../errors/appError";
+import TBike from "./bike.interface";
+import BikeModel from "./bike.model";
 
 const createBikeIntoDB = async (bikeData: TBike): Promise<TBike> => {
   const bike = new BikeModel(bikeData);
   await bike.save();
   return bike.toObject();
 };
-
 
 const BikeSearchableFields = ["fullbike_name"]; // Adjust fields as necessary
 
@@ -20,6 +18,7 @@ const getAllBikeFromDB = async (query: Record<string, unknown>) => {
 
     // Ensure the query excludes deleted bikes
     queryObj.isDelete = false;
+    queryObj.isAvailable = true;
 
     const bikeQuery = new QueryBuilder(BikeModel.find(), queryObj)
       .search(BikeSearchableFields)
@@ -37,6 +36,30 @@ const getAllBikeFromDB = async (query: Record<string, unknown>) => {
 };
 
 
+
+const getAllBikeForFeatureFromDB = async (query: Record<string, unknown>) => {
+  try {
+    const queryObj = { ...query };
+
+    // Ensure the query excludes deleted bikes
+    queryObj.isDelete = false;
+    queryObj.isAvailable = true;
+
+    const bikeQuery = new QueryBuilder(BikeModel.find(), queryObj)
+      .search(BikeSearchableFields)
+      .filter() // Implement filtering based on your needs
+      .paginate() // Implement pagination based on your needs
+      .sort() // Implement sorting based on your needs
+      .fields(); // Implement field selection if needed
+
+    const result = await bikeQuery.modelQuery;
+    return result;
+  } catch (error) {
+    // Handle errors
+    throw new AppError(httpStatus.BAD_REQUEST, "Failed to retrieve bikes");
+  }
+};
+
 //get one bike
 
 const getBikeById = async (id: any) => {
@@ -50,7 +73,6 @@ const getBikeById = async (id: any) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Failed to retrieve Bike");
   }
 };
-
 
 const updatedBikeIntoDB = async (id: string, updateData: Partial<TBike>) => {
   try {
@@ -88,7 +110,6 @@ const updatedBikeIntoDB = async (id: string, updateData: Partial<TBike>) => {
   }
 };
 
-
 const deleteBikeIntoDB = async (id: string): Promise<any> => {
   try {
     // Ensure the ID is valid and perform the soft delete
@@ -115,4 +136,5 @@ export const bikeService = {
   updatedBikeIntoDB,
   deleteBikeIntoDB,
   getBikeById,
+  getAllBikeForFeatureFromDB,
 };

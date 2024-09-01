@@ -77,7 +77,6 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
 });
 // GoogleAuth function
 const googleAuth = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(user);
     let existingUser = yield user_model_1.default.findOne({ email: user.email });
     if (!existingUser) {
         throw new Error("User not found");

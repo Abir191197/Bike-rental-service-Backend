@@ -78,7 +78,6 @@ const refreshToken = async (token: string) => {
 
 const googleAuth = async (user: any) => {
 
-  console.log(user);
   let existingUser = await UserModel.findOne({ email: user.email });
   if (!existingUser) {
     throw new Error("User not found");

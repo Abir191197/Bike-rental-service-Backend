@@ -61,9 +61,37 @@ const allBikeRentalsForAdminOnly = (0, catchAsync_1.default)((req, res) => __awa
         data: result,
     });
 }));
+//Full Payment Controller
+const FullPayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user) {
+        return res.status(http_status_1.default.UNAUTHORIZED).send({
+            success: false,
+            message: "User not authenticated",
+        });
+    }
+    const { TotalPayTran_id } = req.params; // Use `req.params` for URL params
+    const user = req.user;
+    try {
+        const result = yield booking_service_1.BookingService.FullPaymentGetWay(TotalPayTran_id, user);
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.OK,
+            success: true,
+            message: "Payment Info retrieved successfully",
+            data: result,
+        });
+    }
+    catch (error) {
+        (0, sendResponse_1.default)(res, {
+            statusCode: http_status_1.default.INTERNAL_SERVER_ERROR,
+            success: false,
+            message: "An error occurred",
+        });
+    }
+}));
 exports.BookingController = {
     createBooking,
     returnBike,
     allBikeRentals,
     allBikeRentalsForAdminOnly,
+    FullPayment,
 };

@@ -23,4 +23,12 @@ router.get(
 );
 
 
+router.post(
+  "/TotalPayment/:TotalPayTran_id",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  BookingController.FullPayment
+);
+
+
+
 export const BookRoutes = router;

@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bikeService = void 0;
-const bike_model_1 = __importDefault(require("./bike.model"));
-const appError_1 = __importDefault(require("../../errors/appError"));
 const http_status_1 = __importDefault(require("http-status"));
 const QueryBuilder_1 = __importDefault(require("../../builder/QueryBuilder"));
+const appError_1 = __importDefault(require("../../errors/appError"));
+const bike_model_1 = __importDefault(require("./bike.model"));
 const createBikeIntoDB = (bikeData) => __awaiter(void 0, void 0, void 0, function* () {
     const bike = new bike_model_1.default(bikeData);
     yield bike.save();
@@ -28,6 +28,27 @@ const getAllBikeFromDB = (query) => __awaiter(void 0, void 0, void 0, function* 
         const queryObj = Object.assign({}, query);
         // Ensure the query excludes deleted bikes
         queryObj.isDelete = false;
+        queryObj.isAvailable = true;
+        const bikeQuery = new QueryBuilder_1.default(bike_model_1.default.find(), queryObj)
+            .search(BikeSearchableFields)
+            .filter() // Implement filtering based on your needs
+            .paginate() // Implement pagination based on your needs
+            .sort() // Implement sorting based on your needs
+            .fields(); // Implement field selection if needed
+        const result = yield bikeQuery.modelQuery;
+        return result;
+    }
+    catch (error) {
+        // Handle errors
+        throw new appError_1.default(http_status_1.default.BAD_REQUEST, "Failed to retrieve bikes");
+    }
+});
+const getAllBikeForFeatureFromDB = (query) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const queryObj = Object.assign({}, query);
+        // Ensure the query excludes deleted bikes
+        queryObj.isDelete = false;
+        queryObj.isAvailable = true;
         const bikeQuery = new QueryBuilder_1.default(bike_model_1.default.find(), queryObj)
             .search(BikeSearchableFields)
             .filter() // Implement filtering based on your needs
@@ -100,4 +121,5 @@ exports.bikeService = {
     updatedBikeIntoDB,
     deleteBikeIntoDB,
     getBikeById,
+    getAllBikeForFeatureFromDB,
 };

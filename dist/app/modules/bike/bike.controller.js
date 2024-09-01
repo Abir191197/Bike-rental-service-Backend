@@ -38,6 +38,15 @@ const GetAllBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
+const GetFeatureBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield bike_service_1.bikeService.getAllBikeForFeatureFromDB(req.query);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "All bikes retrieved successfully",
+        data: result,
+    });
+}));
 const GetOneBike = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield bike_service_1.bikeService.getBikeById(id);
@@ -93,4 +102,5 @@ exports.bikeController = {
     updatedBike,
     deleteBike,
     GetOneBike,
+    GetFeatureBike,
 };

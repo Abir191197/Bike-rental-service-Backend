@@ -13,6 +13,7 @@ router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin),
 //validateRequest(BikeValidation.bikeValidationSchema),
 bike_controller_1.bikeController.createBike);
 router.get("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), bike_controller_1.bikeController.GetAllBike);
+router.get("/FeatureBike", bike_controller_1.bikeController.GetFeatureBike);
 router.get("/:id", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), bike_controller_1.bikeController.GetOneBike);
 router.put("/:id", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), bike_controller_1.bikeController.updatedBike);
 router.delete("/:id", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), bike_controller_1.bikeController.deleteBike);

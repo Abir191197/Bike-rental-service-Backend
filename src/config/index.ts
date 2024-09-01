@@ -12,4 +12,8 @@ export default {
   CLIENT_REDIRECT_URL: process.env.CLIENT_REDIRECT_URL,
   callbackURL: process.env.callbackURL,
   Google_Redirect_Url: process.env.Google_Redirect_Url,
+  STORE_ID : process.env.STORE_ID,
+  SIGNATURE_KEY : process.env.SIGNATURE_KEY,
+  PAYMENT_URL : process.env.PAYMENT_URL,
+  PAYMENT_VERIFY_URL : process.env.PAYMENT_VERIFY_URL,
 };

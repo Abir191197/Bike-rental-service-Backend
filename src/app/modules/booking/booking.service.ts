@@ -7,6 +7,7 @@ import BookingModel from "./booking.model";
 import { sendPaymentRequest } from "../Payment/payment.utils";
 import mongoose from "mongoose";
 import { sendPaymentRequestFull } from "../Payment/TotalPaymentUtils";
+import { DateTime } from "luxon";
 
 const createBookingIntoDB = async (payload: {
   authUserInformation: any;
@@ -122,7 +123,17 @@ const returnBikeIntoDB = async (id: string) => {
   const timePer: any = bikeId?.PerHour;
 
   const StartTime: any = isBookingExists?.startTime;
-  const returnTime: any = new Date();
+
+
+
+
+const returnTimeLuxon = DateTime.now().setZone("Asia/Dhaka");
+
+// Convert it to a JavaScript Date object
+const returnTime:any = new Date(returnTimeLuxon.toString());
+
+
+ 
   const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
 
   const totalCost: number = Math.round(totalTime * timePer);

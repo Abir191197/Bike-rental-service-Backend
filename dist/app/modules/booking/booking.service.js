@@ -21,6 +21,7 @@ const booking_model_1 = __importDefault(require("./booking.model"));
 const payment_utils_1 = require("../Payment/payment.utils");
 const mongoose_1 = __importDefault(require("mongoose"));
 const TotalPaymentUtils_1 = require("../Payment/TotalPaymentUtils");
+const luxon_1 = require("luxon");
 const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
@@ -106,9 +107,9 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
-    const returnTime = new Date();
-    const returnTimeUTC = returnTime.toISOString();
-    const totalTime = (returnTimeUTC.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
+    const returnTime = luxon_1.DateTime.utc();
+    // Calculate the total time difference in hours
+    const totalTime = returnTime.diff(StartTime, "hours").as("hours");
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {

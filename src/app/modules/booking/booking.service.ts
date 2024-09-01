@@ -7,6 +7,7 @@ import BookingModel from "./booking.model";
 import { sendPaymentRequest } from "../Payment/payment.utils";
 import mongoose from "mongoose";
 import { sendPaymentRequestFull } from "../Payment/TotalPaymentUtils";
+import { DateTime } from "luxon";
 
 const createBookingIntoDB = async (payload: {
   authUserInformation: any;
@@ -122,11 +123,11 @@ const returnBikeIntoDB = async (id: string) => {
   const timePer: any = bikeId?.PerHour;
 
   const StartTime: any = isBookingExists?.startTime;
-  const returnTime = new Date();
-  const returnTimeUTC = returnTime.toISOString();
-  const totalTime =
-    (returnTimeUTC.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
+ const returnTime = DateTime.utc();
 
+ // Calculate the total time difference in hours
+ const totalTime = returnTime.diff(StartTime, "hours").as("hours");
+  
   const totalCost: number = Math.round(totalTime * timePer);
 
   // updated bike available

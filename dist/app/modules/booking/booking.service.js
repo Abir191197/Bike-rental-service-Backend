@@ -106,22 +106,12 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         _id: findBikeModelID,
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
-    // Assuming StartTime is fetched from your database and is in UTC
-    const StartTime = luxon_1.DateTime.fromISO(isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime.toISOString(), {
-        zone: "utc",
-    });
-    // Get the current time in the Asia/Dhaka timezone
-    const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
-    console.log("StartTime:", StartTime.toString());
-    console.log("returnTime:", returnTime.toString());
-    // Ensure both times are in the same timezone for comparison
-    const startTimeInDhaka = StartTime.setZone("Asia/Dhaka");
-    // Calculate the difference in hours between returnTime and StartTime
-    const totalTime = returnTime.diff(startTimeInDhaka, "hours").hours;
-    console.log("totalTime (in hours):", totalTime);
-    // Calculate the total cost
+    const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
+    const returnTimeLuxon = luxon_1.DateTime.now().setZone("Asia/Dhaka");
+    // Convert it to a JavaScript Date object
+    const returnTime = new Date(returnTimeLuxon.toString());
+    const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
-    console.log("totalCost:", totalCost);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {
         new: true,
@@ -195,6 +185,10 @@ const FullPaymentGetWay = (TotalPayTran_id, user) => __awaiter(void 0, void 0, v
             throw new Error("Booking not found for the provided Transaction ID");
         }
         const TotalAmount = isBookingExists.totalCost;
+        // Ensure totalCost is positive
+        if (TotalAmount <= 0) {
+            throw new Error("Invalid total cost");
+        }
         const paymentData = {
             TotalPayTran_id, // Unique per booking
             UserData: {

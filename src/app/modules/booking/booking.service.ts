@@ -5,7 +5,7 @@ import UserModel from "../user/user.model";
 import { TBooking } from "./booking.interface";
 import BookingModel from "./booking.model";
 import { sendPaymentRequest } from "../Payment/payment.utils";
-import mongoose, { Date } from "mongoose";
+import mongoose from "mongoose";
 import { sendPaymentRequestFull } from "../Payment/TotalPaymentUtils";
 import { DateTime } from "luxon";
 
@@ -125,12 +125,14 @@ const returnBikeIntoDB = async (id: string) => {
   const StartTime = DateTime.fromJSDate(isBookingExists?.startTime).setZone(
     "Asia/Dhaka"
   );
-
+  console.log("start", StartTime);
+  
   // Get the current time in Asia/Dhaka timezone
   const returnTime = DateTime.now().setZone("Asia/Dhaka");
-
+console.log("returnTime", returnTime);
   // Calculate the difference in hours between returnTime and StartTime
-  const totalTime: number = returnTime.diff(StartTime, "hours").hours;
+  const totalTime: number = StartTime.diff(returnTime, "hours").hours;
+console.log("totalTime", totalTime);
 
   // Calculate total cost
   const totalCost: number = Math.round(totalTime * timePer);
@@ -247,10 +249,7 @@ const FullPaymentGetWay = async (
 
     const TotalAmount = isBookingExists.totalCost;
 
-    // Ensure totalCost is positive
-    if (TotalAmount <= 0) {
-      throw new Error("Invalid total cost");
-    }
+   
 
     const paymentData = {
       TotalPayTran_id, // Unique per booking

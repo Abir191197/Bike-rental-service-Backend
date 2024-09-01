@@ -107,10 +107,13 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = luxon_1.DateTime.fromJSDate(isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime).setZone("Asia/Dhaka");
+    console.log("start", StartTime);
     // Get the current time in Asia/Dhaka timezone
     const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
+    console.log("returnTime", returnTime);
     // Calculate the difference in hours between returnTime and StartTime
-    const totalTime = returnTime.diff(StartTime, "hours").hours;
+    const totalTime = StartTime.diff(returnTime, "hours").hours;
+    console.log("totalTime", totalTime);
     // Calculate total cost
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available
@@ -186,10 +189,6 @@ const FullPaymentGetWay = (TotalPayTran_id, user) => __awaiter(void 0, void 0, v
             throw new Error("Booking not found for the provided Transaction ID");
         }
         const TotalAmount = isBookingExists.totalCost;
-        // Ensure totalCost is positive
-        if (TotalAmount <= 0) {
-            throw new Error("Invalid total cost");
-        }
         const paymentData = {
             TotalPayTran_id, // Unique per booking
             UserData: {

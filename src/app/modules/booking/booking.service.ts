@@ -122,20 +122,30 @@ const returnBikeIntoDB = async (id: string) => {
 
   const timePer: any = bikeId?.PerHour;
 
-  const StartTime = DateTime.fromJSDate(isBookingExists?.startTime).setZone(
-    "Asia/Dhaka"
-  );
-  console.log("start", StartTime);
-  
-  // Get the current time in Asia/Dhaka timezone
-  const returnTime = DateTime.now().setZone("Asia/Dhaka");
-console.log("returnTime", returnTime);
-  // Calculate the difference in hours between returnTime and StartTime
-  const totalTime: number = StartTime.diff(returnTime, "hours").hours;
-console.log("totalTime", totalTime);
 
-  // Calculate total cost
+
+  // Assuming StartTime is fetched from your database and is in UTC
+  const StartTime = DateTime.fromISO(isBookingExists?.startTime.toISOString(), {
+    zone: "utc",
+  });
+
+  // Get the current time in the Asia/Dhaka timezone
+  const returnTime = DateTime.now().setZone("Asia/Dhaka");
+
+  console.log("StartTime:", StartTime.toString());
+  console.log("returnTime:", returnTime.toString());
+
+  // Ensure both times are in the same timezone for comparison
+  const startTimeInDhaka = StartTime.setZone("Asia/Dhaka");
+
+  // Calculate the difference in hours between returnTime and StartTime
+  const totalTime: number = returnTime.diff(startTimeInDhaka, "hours").hours;
+
+  console.log("totalTime (in hours):", totalTime);
+
+  // Calculate the total cost
   const totalCost: number = Math.round(totalTime * timePer);
+  console.log("totalCost:", totalCost);
 
   // updated bike available
 

@@ -106,16 +106,22 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
         _id: findBikeModelID,
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
-    const StartTime = luxon_1.DateTime.fromJSDate(isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime).setZone("Asia/Dhaka");
-    console.log("start", StartTime);
-    // Get the current time in Asia/Dhaka timezone
+    // Assuming StartTime is fetched from your database and is in UTC
+    const StartTime = luxon_1.DateTime.fromISO(isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime.toISOString(), {
+        zone: "utc",
+    });
+    // Get the current time in the Asia/Dhaka timezone
     const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
-    console.log("returnTime", returnTime);
+    console.log("StartTime:", StartTime.toString());
+    console.log("returnTime:", returnTime.toString());
+    // Ensure both times are in the same timezone for comparison
+    const startTimeInDhaka = StartTime.setZone("Asia/Dhaka");
     // Calculate the difference in hours between returnTime and StartTime
-    const totalTime = StartTime.diff(returnTime, "hours").hours;
-    console.log("totalTime", totalTime);
-    // Calculate total cost
+    const totalTime = returnTime.diff(startTimeInDhaka, "hours").hours;
+    console.log("totalTime (in hours):", totalTime);
+    // Calculate the total cost
     const totalCost = Math.round(totalTime * timePer);
+    console.log("totalCost:", totalCost);
     // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {
         new: true,

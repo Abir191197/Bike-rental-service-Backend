@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingService = void 0;
 const http_status_1 = __importDefault(require("http-status"));
+const luxon_1 = require("luxon");
 const mongoose_1 = __importDefault(require("mongoose"));
 const appError_1 = __importDefault(require("../../errors/appError"));
 const bike_model_1 = __importDefault(require("../bike/bike.model"));
@@ -106,13 +107,11 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
-    // Convert it to a JavaScript Date object
-    const returnTime = new Date().toLocaleString("en-US", {
-        timeZone: "Asia/Dhaka",
-    });
-    const totalTime = (returnTime.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
+    const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
+    // Calculate the difference in hours between returnTime and StartTime
+    const totalTime = returnTime.diff(luxon_1.DateTime.fromJSDate(StartTime), "hours").hours;
+    // Calculate total cost
     const totalCost = Math.round(totalTime * timePer);
-    // updated bike available
     yield bike_model_1.default.findByIdAndUpdate(findBikeModelID, { isAvailable: true }, {
         new: true,
         runValidators: true,

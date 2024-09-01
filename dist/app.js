@@ -26,6 +26,11 @@ const corsOptions = {
     optionsSuccessStatus: 200,
     allowedHeaders: "Content-Type, Authorization",
 };
+// const corsOptions = {
+//   origin: "*", // Allow all origins
+//   credentials: true,
+// };
+app.use((0, cors_1.default)(corsOptions));
 // CORS Middleware
 app.use((0, cors_1.default)(corsOptions));
 // Session middleware

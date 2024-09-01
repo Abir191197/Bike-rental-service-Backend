@@ -122,8 +122,9 @@ const returnBikeIntoDB = async (id: string) => {
   const timePer: any = bikeId?.PerHour;
 
   const StartTime: any = isBookingExists?.startTime;
-  const returnTime: any = new Date();
-  const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
+  const returnTime = new Date(); 
+  const totalTime =
+    (returnTime.getTime() - StartTime.getTime()) / (1000 * 60 * 60); 
 
   const totalCost: number = Math.round(totalTime * timePer);
 
@@ -135,7 +136,7 @@ const returnBikeIntoDB = async (id: string) => {
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 
   //updated booking model
@@ -147,7 +148,7 @@ const returnBikeIntoDB = async (id: string) => {
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 };
 

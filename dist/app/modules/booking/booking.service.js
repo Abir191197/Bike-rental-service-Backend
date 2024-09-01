@@ -107,7 +107,9 @@ const returnBikeIntoDB = (id) => __awaiter(void 0, void 0, void 0, function* () 
     });
     const timePer = bikeId === null || bikeId === void 0 ? void 0 : bikeId.PerHour;
     const StartTime = isBookingExists === null || isBookingExists === void 0 ? void 0 : isBookingExists.startTime;
+    console.log(StartTime);
     const returnTime = luxon_1.DateTime.now().setZone("Asia/Dhaka");
+    console.log(returnTime);
     const totalTime = (returnTime - StartTime) / (1000 * 60 * 60);
     const totalCost = Math.round(totalTime * timePer);
     // updated bike available

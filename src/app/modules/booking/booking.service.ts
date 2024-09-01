@@ -123,8 +123,10 @@ const returnBikeIntoDB = async (id: string) => {
   const timePer: any = bikeId?.PerHour;
 
   const StartTime: any = isBookingExists?.startTime;
-
+  console.log(StartTime);
+  
  const returnTime: any = DateTime.now().setZone("Asia/Dhaka");
+console.log(returnTime);
 
   const totalTime: number = (returnTime - StartTime) / (1000 * 60 * 60);
 

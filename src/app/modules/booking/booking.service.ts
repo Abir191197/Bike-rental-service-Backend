@@ -1,4 +1,5 @@
 import httpStatus from "http-status";
+import { DateTime } from "luxon";
 import mongoose from "mongoose";
 import AppError from "../../errors/appError";
 import BikeModel from "../bike/bike.model";
@@ -121,17 +122,16 @@ const returnBikeIntoDB = async (id: string) => {
 
   const StartTime: any = isBookingExists?.startTime;
 
-  // Convert it to a JavaScript Date object
-  const returnTime: any = new Date().toLocaleString("en-US", {
-    timeZone: "Asia/Dhaka",
-  });
+  const returnTime = DateTime.now().setZone("Asia/Dhaka");
 
-  const totalTime: number =
-    (returnTime.getTime() - StartTime.getTime()) / (1000 * 60 * 60);
+  // Calculate the difference in hours between returnTime and StartTime
+  const totalTime = returnTime.diff(
+    DateTime.fromJSDate(StartTime),
+    "hours"
+  ).hours;
 
-  const totalCost: number = Math.round(totalTime * timePer);
-
-  // updated bike available
+  // Calculate total cost
+  const totalCost = Math.round(totalTime * timePer);
 
   await BikeModel.findByIdAndUpdate(
     findBikeModelID,

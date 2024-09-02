@@ -18,7 +18,7 @@ const getAllBikeFromDB = async (query: Record<string, unknown>) => {
 
     // Ensure the query excludes deleted bikes
     queryObj.isDelete = false;
-    queryObj.isAvailable = false;
+    queryObj.isAvailable = true;
 
     const bikeQuery = new QueryBuilder(BikeModel.find(), queryObj)
       .search(BikeSearchableFields)

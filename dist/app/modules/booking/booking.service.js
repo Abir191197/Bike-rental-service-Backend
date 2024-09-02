@@ -34,10 +34,11 @@ const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
             throw new appError_1.default(http_status_1.default.NOT_FOUND, "User not found");
         }
         // Check if the bike exists and is available
-        const isBikeExist = yield bike_model_1.default.findById({
-            _id: rentalInformation.bikeId,
-        }).session(session);
+        const isBikeExist = yield bike_model_1.default.findById(rentalInformation.bikeId).session(session);
         if (!isBikeExist || isBikeExist.isAvailable === false) {
+            // End session and rollback transaction
+            yield session.abortTransaction();
+            session.endSession();
             throw new appError_1.default(http_status_1.default.NOT_FOUND, "Bike not available");
         }
         const userId = isUserExist._id;
@@ -45,7 +46,6 @@ const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
         const UserData = isUserExist;
         // Generate a random booking ID
         const bookingId = `BOOKING-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-        // Generate a random booking ID
         const TotalPayTran_id = `BOOKING-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
         // Prepare payment data
         const paymentData = {

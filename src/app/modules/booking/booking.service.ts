@@ -26,10 +26,13 @@ const createBookingIntoDB = async (payload: {
     }
 
     // Check if the bike exists and is available
-    const isBikeExist = await BikeModel.findById({
-      _id: rentalInformation.bikeId,
-    }).session(session);
+    const isBikeExist = await BikeModel.findById(
+      rentalInformation.bikeId
+    ).session(session);
     if (!isBikeExist || isBikeExist.isAvailable === false) {
+      // End session and rollback transaction
+      await session.abortTransaction();
+      session.endSession();
       throw new AppError(httpStatus.NOT_FOUND, "Bike not available");
     }
 
@@ -41,7 +44,6 @@ const createBookingIntoDB = async (payload: {
     const bookingId = `BOOKING-${Date.now()}-${Math.floor(
       Math.random() * 10000
     )}`;
-    // Generate a random booking ID
     const TotalPayTran_id = `BOOKING-${Date.now()}-${Math.floor(
       Math.random() * 10000
     )}`;
@@ -99,6 +101,7 @@ const createBookingIntoDB = async (payload: {
     throw error; // Re-throw the error to be handled by the calling function
   }
 };
+
 
 //return bike for admin route
 

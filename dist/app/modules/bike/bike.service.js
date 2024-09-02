@@ -28,7 +28,7 @@ const getAllBikeFromDB = (query) => __awaiter(void 0, void 0, void 0, function* 
         const queryObj = Object.assign({}, query);
         // Ensure the query excludes deleted bikes
         queryObj.isDelete = false;
-        queryObj.isAvailable = true;
+        queryObj.isAvailable = false;
         const bikeQuery = new QueryBuilder_1.default(bike_model_1.default.find(), queryObj)
             .search(BikeSearchableFields)
             .filter() // Implement filtering based on your needs

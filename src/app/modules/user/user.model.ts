@@ -9,10 +9,7 @@ const UserSchema = new Schema<TUser>(
     phone: { type: String },
     address: { type: String },
     googleId: { type: String },
-
     role: { type: String, enum: ["admin", "user"], required: true },
-    followers: [{ type: Schema.Types.ObjectId, ref: "Users", default: [] }],
-    following: [{ type: Schema.Types.ObjectId, ref: "Users", default: [] }],
   },
   { timestamps: true }
 );

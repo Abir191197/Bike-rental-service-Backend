@@ -75,54 +75,7 @@ const updatedUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         });
     }
 }));
-const addFollowing = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.user) {
-        // Handle case where req.user is undefined
-        return (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.UNAUTHORIZED,
-            success: false,
-            message: "User not authenticated",
-            data: null,
-        });
-    }
-    try {
-        const result = yield user_service_1.UserService.addFollowingToUser(req.user, req.body);
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.OK,
-            success: true,
-            message: "Following  successfully",
-            data: result,
-        });
-    }
-    catch (error) {
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.INTERNAL_SERVER_ERROR,
-            success: false,
-            message: "Failed to add following",
-            data: null,
-        });
-    }
-}));
-const getMyFollowers = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.user) {
-        return (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.UNAUTHORIZED,
-            success: false,
-            message: "User not authenticated",
-            data: null,
-        });
-    }
-    const followers = yield user_service_1.UserService.getMyFollowers(req.user);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: "Followers retrieved successfully",
-        data: followers,
-    });
-}));
 exports.userControllers = {
     findUser,
     updatedUser,
-    addFollowing,
-    getMyFollowers,
 };

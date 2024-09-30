@@ -13,9 +13,6 @@ const userValidationSchema = z.object({
       .min(10, { message: "Phone number must be at least 10 characters" }),
     address: z.string().min(1, { message: "Address is required" }),
     role: z.enum(["admin", "user"]),
-    googleId: z.string().optional(),
-    followers: z.array(z.string()).optional(),
-    following: z.array(z.string()).optional(),
   }),
 });
 export const UserValidation = {

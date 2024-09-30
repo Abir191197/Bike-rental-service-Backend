@@ -32,8 +32,6 @@ const UserSchema = new mongoose_1.Schema({
     address: { type: String },
     googleId: { type: String },
     role: { type: String, enum: ["admin", "user"], required: true },
-    followers: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Users", default: [] }],
-    following: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Users", default: [] }],
 }, { timestamps: true });
 const UserModel = mongoose_1.default.model("Users", UserSchema, "Users");
 exports.default = UserModel;

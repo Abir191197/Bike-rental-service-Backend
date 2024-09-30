@@ -67,61 +67,8 @@ const updatedUser = catchAsync(async (req, res) => {
   }
 });
 
-
-const addFollowing = catchAsync(async (req, res) => {
-  if (!req.user) {
-    // Handle case where req.user is undefined
-    return sendResponse(res, {
-      statusCode: httpStatus.UNAUTHORIZED,
-      success: false,
-      message: "User not authenticated",
-      data: null,
-    });
-  }
-
-  try {
-    const result = await UserService.addFollowingToUser(req.user, req.body);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Following  successfully",
-      data: result,
-    });
-  } catch (error) {
-    sendResponse(res, {
-      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
-      success: false,
-      message: "Failed to add following",
-      data: null,
-    });
-  }
-});
-
-
-
-const getMyFollowers = catchAsync(async (req, res) => {
-  if (!req.user) {
-    return sendResponse(res, {
-      statusCode: httpStatus.UNAUTHORIZED,
-      success: false,
-      message: "User not authenticated",
-      data: null,
-    });
-  }
-
-  const followers = await UserService.getMyFollowers(req.user);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Followers retrieved successfully",
-    data: followers,
-  });
-});
-
 export const userControllers = {
+ 
   findUser,
   updatedUser,
-  addFollowing,
-  getMyFollowers,
 };

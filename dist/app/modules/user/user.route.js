@@ -11,6 +11,4 @@ const user_constant_1 = require("./user.constant");
 const router = express_1.default.Router();
 router.get("/me", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), user_controller_1.userControllers.findUser);
 router.put("/me", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), user_controller_1.userControllers.updatedUser);
-router.put("/addFollowing", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), user_controller_1.userControllers.updatedUser);
-router.get("/getMyFollowers", (0, auth_1.default)(user_constant_1.USER_ROLE.admin, user_constant_1.USER_ROLE.user), user_controller_1.userControllers.getMyFollowers);
 exports.UserRoutes = router;

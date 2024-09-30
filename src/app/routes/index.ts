@@ -2,9 +2,9 @@ import express from "express";
 
 import { AuthRoutes } from "../modules/Auth/auth.router";
 import { UserRoutes } from "../modules/user/user.route";
-import { BikeRoutes } from "../modules/bike/bike.route";
-import { BookRoutes } from "../modules/booking/booking.route";
-import { PaymentRoutes } from "../modules/Payment/payment.route";
+
+
+import { PetPostRoutes } from "../modules/Pet Post/post.route";
 
 const router = express.Router();
 
@@ -18,17 +18,13 @@ const moduleRoutes = [
     route: UserRoutes,
   },
   {
-    path: "/bikes",
-    route: BikeRoutes,
+    path: "/pet",
+    route: PetPostRoutes,
   },
-  {
-    path: "/rentals",
-    route: BookRoutes,
-  },
-  {
-    path: "/payment",
-    route: PaymentRoutes,
-  },
+  // {
+  //   path: "/payment",
+  //   route: PaymentRoutes,
+  // },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

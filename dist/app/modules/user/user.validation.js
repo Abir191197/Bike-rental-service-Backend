@@ -15,6 +15,9 @@ const userValidationSchema = zod_1.z.object({
             .min(10, { message: "Phone number must be at least 10 characters" }),
         address: zod_1.z.string().min(1, { message: "Address is required" }),
         role: zod_1.z.enum(["admin", "user"]),
+        googleId: zod_1.z.string().optional(),
+        followers: zod_1.z.array(zod_1.z.string()).optional(),
+        following: zod_1.z.array(zod_1.z.string()).optional(),
     }),
 });
 exports.UserValidation = {

@@ -18,7 +18,7 @@ app.use(cookieParser());
 const corsOptions = {
   origin: [
     "http://localhost:5173",
-    "https://cox-s-sea-side-bike-frontend.vercel.app",
+    "",
   ],
   credentials: true,
   methods: "GET,POST,PUT,DELETE",
@@ -54,7 +54,7 @@ app.use(
 
 // Routes
 app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from setup file");
+  res.send("Hello from Pet Care Service");
 });
 app.use("/api", router);
 

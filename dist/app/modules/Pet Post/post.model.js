@@ -23,17 +23,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PetPostModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const UserSchema = new mongoose_1.Schema({
-    name: { type: String },
-    email: { type: String },
-    password: { type: String },
-    phone: { type: String },
-    address: { type: String },
-    googleId: { type: String },
-    role: { type: String, enum: ["admin", "user"], required: true },
-    followers: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Users", default: [] }],
-    following: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Users", default: [] }],
+const CommentSchema = new mongoose_1.Schema({
+    authorId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
+    content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
+const PetPostSchema = new mongoose_1.Schema({
+    authorId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Users", required: true },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    category: { type: String, enum: ["Tip", "Story"], required: true },
+    isPremium: { type: Boolean, default: false },
+    PremiumAmount: { type: Number, default: null },
+    images: [String],
+    upvote: { type: Number, default: 0 },
+    downvote: { type: Number, default: 0 },
+    comments: [CommentSchema],
 }, { timestamps: true });
-const UserModel = mongoose_1.default.model("Users", UserSchema, "Users");
-exports.default = UserModel;
+exports.PetPostModel = mongoose_1.default.model("PetPost", PetPostSchema, "PetPost");
